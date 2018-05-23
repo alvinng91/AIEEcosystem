@@ -1,7 +1,6 @@
 package com.cg.aieecosystemapp.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -9,11 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.springframework.data.annotation.Id;
+
 
 @Entity
 public class Partner {
@@ -31,10 +31,10 @@ public class Partner {
 	private String url;
 
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	private List<String> technologyTags;
+	private List<TechnologyTag> technologyTags;
 
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	private List<String> industries;
+	private List<IndustryTag> industries;
 
 	public String getPartnerId() {
 		return partnerId;
@@ -76,19 +76,19 @@ public class Partner {
 		this.url = url;
 	}
 
-	public List<String> getTechnologyTags() {
+	public List<TechnologyTag> getTechnologyTags() {
 		return technologyTags;
 	}
 
-	public void setTechnologyTags(List<String> technologyTags) {
+	public void setTechnologyTags(List<TechnologyTag> technologyTags) {
 		this.technologyTags = technologyTags;
 	}
 
-	public List<String> getIndustries() {
+	public List<IndustryTag> getIndustries() {
 		return industries;
 	}
 
-	public void setIndustries(List<String> industries) {
+	public void setIndustries(List<IndustryTag> industries) {
 		this.industries = industries;
 	}
 

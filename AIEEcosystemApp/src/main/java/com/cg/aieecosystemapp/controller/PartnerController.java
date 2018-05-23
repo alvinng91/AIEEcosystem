@@ -20,7 +20,7 @@ import com.cg.aieecosystemapp.service.PartnerService;
 public class PartnerController {
 
 	@Autowired
-	PartnerService service;
+	private PartnerService service;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/partner") 
 	public Partner createPartner(String name, String foundingDate, String foundBy, String url,
