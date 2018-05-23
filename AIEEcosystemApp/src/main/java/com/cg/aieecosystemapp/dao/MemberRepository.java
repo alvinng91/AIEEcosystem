@@ -6,4 +6,5 @@ import com.cg.aieecosystemapp.model.Member;
 public interface MemberRepository extends JpaRepository<Member, Integer>
 {
     public Member findByEmailAndPassword(String email, String password);
+    public Member findByEmail(String email);
 }

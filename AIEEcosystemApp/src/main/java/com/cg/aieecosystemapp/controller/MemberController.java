@@ -20,21 +20,12 @@ public class MemberController
     public Member createMember(String firstName, String lastName, String position, String email, int tier,
 	    String password)
     {
-	Member newMember = findMember(email, password);
-
-	if (newMember == null)
-	{
-	    return service.createMember(firstName, lastName, position, email, tier, password);
-	}
-	else
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' already exist!!");
-	}
+	return service.createMember(firstName, lastName, position, email, tier, password);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Member findMember(String email, String password)
+    @RequestMapping(method = RequestMethod.PUT)
+    public Member updateMember(String email, int tier)
     {
-	return service.findMember(email, password);
+	return service.updateMemberTier(email, tier);
     }
 }
