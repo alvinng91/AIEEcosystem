@@ -1,19 +1,13 @@
 package com.cg.aieecosystemapp.model;
 
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.OneToMany;
+import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.springframework.data.annotation.Id;
 
 @Entity
 public class Partner {
@@ -25,17 +19,20 @@ public class Partner {
 	private String name;
 
 	@Temporal(TemporalType.DATE)
-	private LocalDate foundingDate;
+	private Date foundingDate;
 
 	private String foundBy;
 	private String url;
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	private List<String> technologyTags;
+//	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+//	private List<String> technologyTags;
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	private List<String> industries;
+//	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+//	private List<String> industries;
 
+	private String technologyTags;
+	private String  industries;
+	
 	public String getPartnerId() {
 		return partnerId;
 	}
@@ -52,11 +49,11 @@ public class Partner {
 		this.name = name;
 	}
 
-	public LocalDate getFoundingDate() {
+	public Date getFoundingDate() {
 		return foundingDate;
 	}
 
-	public void setFoundingDate(LocalDate foundingDate) {
+	public void setFoundingDate(Date foundingDate) {
 		this.foundingDate = foundingDate;
 	}
 
@@ -76,19 +73,19 @@ public class Partner {
 		this.url = url;
 	}
 
-	public List<String> getTechnologyTags() {
+	public String getTechnologyTags() {
 		return technologyTags;
 	}
 
-	public void setTechnologyTags(List<String> technologyTags) {
+	public void setTechnologyTags(String technologyTags) {
 		this.technologyTags = technologyTags;
 	}
 
-	public List<String> getIndustries() {
+	public String getIndustries() {
 		return industries;
 	}
 
-	public void setIndustries(List<String> industries) {
+	public void setIndustries(String industries) {
 		this.industries = industries;
 	}
 
