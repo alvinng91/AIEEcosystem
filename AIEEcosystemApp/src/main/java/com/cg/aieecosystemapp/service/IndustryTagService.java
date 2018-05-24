@@ -24,11 +24,9 @@ public class IndustryTagService {
 		return tag;
 	}
 
-	public List<IndustryTag> searchIndustryTagByName(String name) {
-		
-		
+	public List<IndustryTag> searchIndustryTagByName(List<String> names) {
 
-		return repository.findIndustryTagByName(name);
+		return repository.findByNameIn(names);
 	}
 
 }

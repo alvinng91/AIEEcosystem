@@ -1,16 +1,14 @@
 package com.cg.aieecosystemapp.dao;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cg.aieecosystemapp.model.IndustryTag;
-import com.cg.aieecosystemapp.model.TechnologyTag;
 
-public interface IndustryTagRepository extends MongoRepository<IndustryTag, String> {
+public interface IndustryTagRepository extends JpaRepository<IndustryTag, Integer> {
 
-	@Query("{ 'name' : ?0 }")
-	List<IndustryTag> findIndustryTagByName(String name);
+	List<IndustryTag> findByNameIn(List<String> names);
 
 }

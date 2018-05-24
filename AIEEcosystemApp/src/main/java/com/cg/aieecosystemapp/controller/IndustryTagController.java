@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.aieecosystemapp.model.IndustryTag;
@@ -27,9 +28,9 @@ public class IndustryTagController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public List<IndustryTag> retrieveTechnologyTagsFromName(String name, HttpServletResponse response) {
+	public List<IndustryTag> retrieveIndustryTagsFromName(@RequestParam List<String> names, HttpServletResponse response) {
 
-		return service.searchIndustryTagByName(name);
+		return service.searchIndustryTagByName(names);
 	}
 
 }

@@ -1,18 +1,21 @@
 package com.cg.aieecosystemapp.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 
 @Entity
@@ -20,27 +23,30 @@ public class Partner {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String partnerId;
+	private int partnerId;
 
+	@Column(unique = true)
 	private String name;
 
 	@Temporal(TemporalType.DATE)
-	private LocalDate foundingDate;
+	private Date foundingDate;
 
 	private String foundBy;
 	private String url;
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany(cascade = { CascadeType.ALL })
 	private List<TechnologyTag> technologyTags;
+	
+	
+	@ManyToMany(cascade = { CascadeType.ALL })
+	private List<IndustryTag> industryTags;
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	private List<IndustryTag> industries;
-
-	public String getPartnerId() {
+	public int getPartnerId() {
 		return partnerId;
 	}
 
-	public void setPartnerId(String partnerId) {
+	public void setPartnerId(int partnerId) {
 		this.partnerId = partnerId;
 	}
 
@@ -52,11 +58,11 @@ public class Partner {
 		this.name = name;
 	}
 
-	public LocalDate getFoundingDate() {
+	public Date getFoundingDate() {
 		return foundingDate;
 	}
 
-	public void setFoundingDate(LocalDate foundingDate) {
+	public void setFoundingDate(Date foundingDate) {
 		this.foundingDate = foundingDate;
 	}
 
@@ -85,11 +91,11 @@ public class Partner {
 	}
 
 	public List<IndustryTag> getIndustries() {
-		return industries;
+		return industryTags;
 	}
 
 	public void setIndustries(List<IndustryTag> industries) {
-		this.industries = industries;
+		this.industryTags = industries;
 	}
 
 }

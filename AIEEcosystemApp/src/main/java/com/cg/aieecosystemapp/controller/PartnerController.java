@@ -1,8 +1,10 @@
 package com.cg.aieecosystemapp.controller;
 
-import java.time.LocalDate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,38 +12,37 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.service.PartnerService;
 
 @RestController
-@RequestMapping(path = "/AIEEcosystem")
+@RequestMapping(path = "/api/partner")
 public class PartnerController {
 
 	@Autowired
 	private PartnerService service;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/partner") 
+	@RequestMapping(method = RequestMethod.POST)
 	public Partner createPartner(String name, String foundingDate, String foundBy, String url,
-			String[] technologyTagNames, String[] industryNames, HttpServletResponse response) {
+			@RequestParam List<String> technologyTagNames, @RequestParam List<String> industryNames, HttpServletResponse response)
+			throws ParseException {
 
-		LocalDate parsedFoundingDate = LocalDate.parse(foundingDate);
-
-		List<String> technologyTagList = new ArrayList<String>();
-		Collections.addAll(technologyTagList, technologyTagNames);
-
-		List<String> industryList = new ArrayList<String>();
-		Collections.addAll(industryList, industryNames);
-
-		return service.createPartner(name, parsedFoundingDate, foundBy, url, technologyTagList, industryList);
+		return service.createPartner(name, foundingDate, foundBy, url, technologyTagNames, industryNames);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/partner") 
-	public List<Partner> retrievePartnersFromTagSearch(String[] technologyTag, HttpServletResponse response) {
-    
-		
-		return service.searchPartnersByTag(technologyTag);
+	@RequestMapping(method = RequestMethod.GET, value = "/technologytag")
+	public List<Partner> retrievePartnersFromTechnologyTag(@RequestParam List<String> technologyTags, HttpServletResponse response) {
+
+		return service.searchPartnersByTechnologyTag(technologyTags);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/industrytag")
+	public List<Partner> retrievePartnersFromIndustryTag(@RequestParam List<String> industryTags, HttpServletResponse response) {
+
+		return service.searchPartnersByIndustryTag(industryTags);
 	}
 
 }

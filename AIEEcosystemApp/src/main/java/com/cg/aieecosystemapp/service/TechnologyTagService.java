@@ -24,9 +24,9 @@ public class TechnologyTagService {
 		return tag;
 	}
 
-	public List<TechnologyTag> searchTechnologyTagByName(String name) {
-		
-		return repository.findTechnologyTagByName(name);
+	public List<TechnologyTag> searchTechnologyTagByName(List<String> names) {
+
+		return repository.findByNameIn(names);
 	}
 
 }
