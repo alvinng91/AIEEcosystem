@@ -10,93 +10,82 @@ import com.cg.aieecosystemapp.model.Member;
 @Service
 public class MemberService
 {
-    @Autowired
-    private MemberRepository repository;
+	@Autowired
+	private MemberRepository repository;
 
-    public Member createMember(String firstName, String lastName, String position, String email, int tier,
-	    String password)
-    {
-	Member existingMember = findMemberUsingEmail(email);
-
-	if (existingMember == null)
+	public Member createMember(String firstName, String lastName, String position, String email, int tier,
+			String password)
 	{
-	    Member newMember = new Member(firstName, lastName, position, email, tier, password, false);
-	    repository.save(newMember);
-	    return newMember;
-	}
-	else
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' already exist!!");
+		Boolean memberExisted = repository.existsByEmail(email);
+
+		if (!memberExisted)
+		{
+			Member newMember = new Member(firstName, lastName, position, email, tier, password, false);
+			newMember = repository.save(newMember);
+			return newMember;
+		}
+		else
+		{
+			throw new AieExceptionClass("Member with email '" + email + "' already exist!!");
+		}
+
 	}
 
-    }
-
-    private Member findMemberUsingEmailAuth(String email, String password)
-    {
-	return repository.findByEmailAndPassword(email, password);
-    }
-
-    private Member findMemberUsingEmail(String email)
-    {
-	return repository.findByEmail(email);
-    }
-    
-    public Member authenticateMember(String email, String password)
-    {
-	Member correctMember = repository.findByEmailAndPassword(email, password);
-	
-	if(correctMember != null)
+	public Member authenticateMember(String email, String password)
 	{
-	    return correctMember;
-	}
-	else
-	{
-	    throw new AieExceptionClass("Username/Password is incorrect!!");
-	}
-    }
+		Member correctMember = repository.findByEmailAndPassword(email, password);
 
-    public Member getExistingMember(String email)
-    {
-	Member existingMember = findMemberUsingEmail(email);
+		if (correctMember != null)
+		{
+			return correctMember;
+		}
+		else
+		{
+			throw new AieExceptionClass("Username/Password is incorrect!!");
+		}
+	}
 
-	if (existingMember != null)
+	public Member getExistingMember(String email)
 	{
-	    return existingMember;
-	}
-	else
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist!!");
-	}
-    }
+		Member existingMember = repository.findByEmail(email);
 
-    public Member updateMemberTier(String email, int tier)
-    {
-	Member existingMember = findMemberUsingEmail(email);
+		if (existingMember != null)
+		{
+			return existingMember;
+		}
+		else
+		{
+			throw new AieExceptionClass("Member with email '" + email + "' does not exist!!");
+		}
+	}
 
-	if (existingMember != null)
+	public Member updateMemberTier(String email, int tier)
 	{
-	    existingMember.setTier(tier);
-	    repository.save(existingMember);
-	    return existingMember;
-	}
-	else
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to update!!");
-	}
-    }
+		Member existingMember = repository.findByEmail(email);
 
-    public Member deleteExistingMember(String email)
-    {
-	Member existingMember = findMemberUsingEmail(email);
+		if (existingMember != null)
+		{
+			existingMember.setTier(tier);
+			existingMember = repository.save(existingMember);
+			return existingMember;
+		}
+		else
+		{
+			throw new AieExceptionClass("Member with email '" + email + "' does not exist to update!!");
+		}
+	}
 
-	if (existingMember == null)
+	public void deleteExistingMember(String email)
 	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to delete!!");
+		Member existingMember = repository.findByEmail(email);
+
+		if (existingMember == null)
+		{
+			throw new AieExceptionClass("Member with email '" + email + "' does not exist to delete!!");
+		}
+		else
+		{
+			repository.delete(existingMember);
+		}
 	}
-	else
-	{
-	     repository.delete(existingMember); 
-	     return null;
-	}
-    }
 }
