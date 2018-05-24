@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
 public class Member
@@ -16,7 +15,7 @@ public class Member
     private String lastName;
     private String position;
     private String email;
-    private int tier;
+    private String tier;
     private String password;
     private boolean accountLocked;
 
@@ -24,7 +23,7 @@ public class Member
     {
     }
 
-    public Member(String firstName, String lastName, String position, String email, int tier, String password,
+    public Member(String firstName, String lastName, String position, String email, String tier, String password,
 	    boolean accountLocked)
     {
 	super();
@@ -87,12 +86,12 @@ public class Member
 	this.email = email;
     }
 
-    public int getTier()
+    public String getTier()
     {
 	return tier;
     }
 
-    public void setTier(int tier)
+    public void setTier(String tier)
     {
 	this.tier = tier;
     }
