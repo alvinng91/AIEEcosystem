@@ -16,7 +16,7 @@ public class MemberService
     public Member createMember(String firstName, String lastName, String position, String email, int tier,
 	    String password)
     {
-	Member existingMember = findMemberUsingEmailAuth(email, password);
+	Member existingMember = findMemberUsingEmail(email);
 
 	if (existingMember == null)
 	{
