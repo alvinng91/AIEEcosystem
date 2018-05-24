@@ -40,6 +40,34 @@ public class MemberService
     {
 	return repository.findByEmail(email);
     }
+    
+    public Member authenticateMember(String email, String password)
+    {
+	Member correctMember = repository.findByEmailAndPassword(email, password);
+	
+	if(correctMember != null)
+	{
+	    return correctMember;
+	}
+	else
+	{
+	    throw new AieExceptionClass("Username/Password is incorrect!!");
+	}
+    }
+
+    public Member getExistingMember(String email)
+    {
+	Member existingMember = findMemberUsingEmail(email);
+
+	if (existingMember != null)
+	{
+	    return existingMember;
+	}
+	else
+	{
+	    throw new AieExceptionClass("Member with email '" + email + "' does not exist!!");
+	}
+    }
 
     public Member updateMemberTier(String email, int tier)
     {
@@ -53,7 +81,22 @@ public class MemberService
 	}
 	else
 	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist!!");
+	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to update!!");
+	}
+    }
+
+    public Member deleteExistingMember(String email)
+    {
+	Member existingMember = findMemberUsingEmail(email);
+
+	if (existingMember == null)
+	{
+	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to delete!!");
+	}
+	else
+	{
+	     repository.delete(existingMember); 
+	     return null;
 	}
     }
 }
