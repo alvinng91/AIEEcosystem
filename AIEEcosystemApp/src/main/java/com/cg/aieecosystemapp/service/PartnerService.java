@@ -15,7 +15,7 @@ import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.model.TechnologyTag;
-import com.cg.aieecosystemapp.utilities.AieUtility;
+import com.cg.aieecosystemapp.utility.AieUtility;
 
 @Service
 public class PartnerService {

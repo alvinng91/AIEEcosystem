@@ -1,4 +1,4 @@
-package com.cg.aieecosystemapp.utilities;
+package com.cg.aieecosystemapp.utility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
