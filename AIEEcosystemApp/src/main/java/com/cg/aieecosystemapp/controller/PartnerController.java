@@ -27,24 +27,40 @@ public class PartnerController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public Partner createPartner(String name, String foundingDate, String foundBy, String url, String location,
-			String description, @RequestParam List<String> technologyTagNames, @RequestParam List<String> industryNames,
-			HttpServletResponse response) throws ParseException {
+			String description, @RequestParam List<String> technologyTagNames, @RequestParam List<String> industryNames)
+			throws ParseException {
 
-		return service.createPartner(name, foundingDate, foundBy, url,location,description, technologyTagNames, industryNames);
+		return service.createPartner(name, foundingDate, foundBy, url, location, description, technologyTagNames,
+				industryNames);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/technologytag")
-	public List<Partner> retrievePartnersFromTechnologyTag(@RequestParam List<String> technologyTags,
-			HttpServletResponse response) {
+	public List<Partner> retrievePartnersFromTechnologyTag(@RequestParam List<String> technologyTags) {
 
 		return service.searchPartnersByTechnologyTag(technologyTags);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/industrytag")
-	public List<Partner> retrievePartnersFromIndustryTag(@RequestParam List<String> industryTags,
-			HttpServletResponse response) {
+	public List<Partner> retrievePartnersFromIndustryTag(@RequestParam List<String> industryTags) {
 
 		return service.searchPartnersByIndustryTag(industryTags);
+	}
+
+	@RequestMapping(method = RequestMethod.PUT)
+	public Partner updatePartnerDescription(int partnerId, String name, String foundingDate, String foundBy, String url,
+			String location, String description, @RequestParam List<String> technologyTagNames,
+			@RequestParam List<String> industryTagNames) throws ParseException {
+		
+		
+
+		return service.updatePartner(partnerId, name, foundingDate, foundBy, url, location, description,
+				technologyTagNames, industryTagNames);
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE)
+	public void deletePartner(int partnerId) throws ParseException {
+
+		service.deletePartner(partnerId);
 	}
 
 }
