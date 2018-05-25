@@ -24,7 +24,7 @@ public class TechnologyTag {
 
 	
 	@Column(unique = true)
-	private String name;
+	private String name; //ensure that it is case sensitive
 
 	private String description;
 

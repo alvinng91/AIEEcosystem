@@ -21,13 +21,13 @@ public class TechnologyTagController {
 	TechnologyTagService service;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public TechnologyTag createTechnologyTag(String name, String description, HttpServletResponse response) {
+	public TechnologyTag createTechnologyTag(String name, String description) {
 
 		return service.createTechnologyTag(name, description);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public List<TechnologyTag> retrieveTechnologyTagsFromName(@RequestParam List<String> names, HttpServletResponse response) {
+	public List<TechnologyTag> retrieveTechnologyTagsFromName(@RequestParam List<String> names) {
 
 		return service.searchTechnologyTagByName(names);
 	}

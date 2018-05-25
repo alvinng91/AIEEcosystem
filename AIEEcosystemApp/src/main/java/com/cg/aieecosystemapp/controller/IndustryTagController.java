@@ -22,13 +22,13 @@ public class IndustryTagController {
 	private IndustryTagService service;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public IndustryTag createIndustryTag(String name, String description, HttpServletResponse response) {
+	public IndustryTag createIndustryTag(String name, String description) {
 
 		return service.createIndustryTag(name, description);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public List<IndustryTag> retrieveIndustryTagsFromName(@RequestParam List<String> names, HttpServletResponse response) {
+	public List<IndustryTag> retrieveIndustryTagsFromName(@RequestParam List<String> names) {
 
 		return service.searchIndustryTagByName(names);
 	}
