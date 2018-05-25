@@ -2,6 +2,7 @@ package com.cg.aieecosystemapp.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,7 +29,7 @@ public class TechnologyTag {
 	private String description;
 
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@ManyToMany
+	@ManyToMany(mappedBy = "technologyTags")
 	private List<Partner> partner;
 
 	public String getName() {
