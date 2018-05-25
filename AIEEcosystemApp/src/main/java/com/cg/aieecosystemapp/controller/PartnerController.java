@@ -26,21 +26,23 @@ public class PartnerController {
 	private PartnerService service;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public Partner createPartner(String name, String foundingDate, String foundBy, String url,
-			@RequestParam List<String> technologyTagNames, @RequestParam List<String> industryNames, HttpServletResponse response)
-			throws ParseException {
+	public Partner createPartner(String name, String foundingDate, String foundBy, String url, String location,
+			String description, @RequestParam List<String> technologyTagNames, @RequestParam List<String> industryNames,
+			HttpServletResponse response) throws ParseException {
 
-		return service.createPartner(name, foundingDate, foundBy, url, technologyTagNames, industryNames);
+		return service.createPartner(name, foundingDate, foundBy, url,location,description, technologyTagNames, industryNames);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/technologytag")
-	public List<Partner> retrievePartnersFromTechnologyTag(@RequestParam List<String> technologyTags, HttpServletResponse response) {
+	public List<Partner> retrievePartnersFromTechnologyTag(@RequestParam List<String> technologyTags,
+			HttpServletResponse response) {
 
 		return service.searchPartnersByTechnologyTag(technologyTags);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/industrytag")
-	public List<Partner> retrievePartnersFromIndustryTag(@RequestParam List<String> industryTags, HttpServletResponse response) {
+	public List<Partner> retrievePartnersFromIndustryTag(@RequestParam List<String> industryTags,
+			HttpServletResponse response) {
 
 		return service.searchPartnersByIndustryTag(industryTags);
 	}

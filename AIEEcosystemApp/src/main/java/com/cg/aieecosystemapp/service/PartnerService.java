@@ -29,7 +29,7 @@ public class PartnerService {
 	@Autowired
 	private IndustryTagRepository indutryTagRepository;
 
-	public Partner createPartner(String name, String foundingDate, String foundBy, String url,
+	public Partner createPartner(String name, String foundingDate, String foundBy, String url,String location, String description,
 			List<String> technologyTagNames, List<String> industryTagNames) throws ParseException {
 
 		Partner partner = new Partner();
@@ -40,6 +40,8 @@ public class PartnerService {
 		partner.setFoundingDate(parsedFoundingDate);
 		partner.setFoundBy(foundBy);
 		partner.setUrl(url);
+		partner.setLocation(location);
+		partner.setDescription(description);
 
 		List<TechnologyTag> technologyTagObjects = technologyTagRepository.findByNameIn(technologyTagNames);
 		List<IndustryTag> industryTagObjects = indutryTagRepository.findByNameIn(industryTagNames);

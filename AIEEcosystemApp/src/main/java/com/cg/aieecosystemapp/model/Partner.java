@@ -35,6 +35,8 @@ public class Partner {
 
 	private String foundBy;
 	private String url;
+	private String location;
+	private String description;
 
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
@@ -88,6 +90,24 @@ public class Partner {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public List<TechnologyTag> getTechnologyTags() {
