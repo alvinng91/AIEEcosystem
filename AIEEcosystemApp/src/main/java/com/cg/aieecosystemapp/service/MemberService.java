@@ -1,5 +1,10 @@
 package com.cg.aieecosystemapp.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,81 +50,85 @@ public class MemberService
 
     }
 
-    public Member authenticateMember(String email, String password)
+    public List<Member> getAllMembers()
     {
-	if (!(AieUtility.isMemberEmailCorrect(email) && AieUtility.isMemberPasswordCorrect(password)))
+	List<Member> getAllMembers = repository.findAll();
+
+	if (getAllMembers == null)
 	{
-	    throw new AieExceptionClass("Invalid Email or Password!! Try Again!!");
+	    return new ArrayList<>();
 	}
 
-	Member correctMember = repository.findByEmailAndPassword(email, password);
+	return getAllMembers;
+    }
 
-	if (correctMember != null)
+    public List<Member> getFilteredMembers(List<String> filter)
+    {
+	Set<Member> filteredMembers = new HashSet<>();
+
+	for (String aMember : filter)
 	{
-	    return correctMember;
+	    List<Member> eachFilteredMemberResultList = repository
+		    .findByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContainingOrEmailIgnoreCaseContaining(
+			    aMember, aMember, aMember);
+
+	    boolean successfullyAddedToSet = filteredMembers.addAll(eachFilteredMemberResultList);
+
+	    if (successfullyAddedToSet == false)
+	    {
+		throw new AieExceptionClass("Internal Error when retrieving filtered members!!");
+	    }
 	}
-	else
+
+	return new ArrayList<>(filteredMembers);
+    }
+
+    public Member updateMemberTier(String id, String tier)
+    {
+	try
 	{
-	    throw new AieExceptionClass("Email/Password is incorrect!!");
+	    Member existingMember = repository.findByMemberId(Integer.parseInt(id));
+    
+	    if (existingMember != null)
+	    {
+		if (!AieUtility.isMemberTierCorrect(tier))
+		{
+		    throw new AieExceptionClass("Invalid tier '" + tier + "')!! Try Again!!");
+		}
+
+		existingMember.setTier(tier);
+		existingMember = repository.save(existingMember);
+		return existingMember;
+	    }
+	    else
+	    {
+		throw new AieExceptionClass("Member to update does not exist !!");
+	    }
+	}
+	catch (NumberFormatException e)
+	{
+	    throw new AieExceptionClass("Id is invalid to update the member!!");
 	}
     }
 
-    public Member getExistingMember(String email)
+    public void deleteExistingMember(String id)
     {
-	if (!AieUtility.isMemberEmailCorrect(email))
+	try
 	{
-	    throw new AieExceptionClass("Invalid email : '" + email + "'!! Try again with valid email");
-	}
+	    Member existingMember = repository.findByMemberId(Integer.parseInt(id));
 
-	Member existingMember = repository.findByEmail(email);
-
-	if (existingMember != null)
-	{
-	    return existingMember;
+	    if (existingMember == null)
+	    {
+		throw new AieExceptionClass("Member to delete does not exists!!");
+	    }
+	    else
+	    {
+		repository.delete(existingMember);
+	    }
 	}
-	else
+	catch (NumberFormatException e)
 	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist!!");
-	}
-    }
-
-    public Member updateMemberTier(String email, String tier)
-    {
-	if (!(AieUtility.isMemberEmailCorrect(email) && AieUtility.isMemberTierCorrect(tier)))
-	{
-	    throw new AieExceptionClass("Invalid email ('" + email + "') or tier '" + tier + "')!! Try Again!!");
-	}
-
-	Member existingMember = repository.findByEmail(email);
-
-	if (existingMember != null)
-	{
-	    existingMember.setTier(tier);
-	    existingMember = repository.save(existingMember);
-	    return existingMember;
-	}
-	else
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to update!!");
-	}
-    }
-
-    public void deleteExistingMember(String email)
-    {
-	if (!AieUtility.isMemberEmailCorrect(email))
-	{
-	    throw new AieExceptionClass("Invalid email : '" + email + "'!! Try again with valid email");
-	}
-
-	Member existingMember = repository.findByEmail(email);
-
-	if (existingMember == null)
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to delete!!");
-	}
-	else
-	{
-	    repository.delete(existingMember);
+	    throw new AieExceptionClass("Id is invalid to update the member!!");
 	}
     }
 }

@@ -1,10 +1,14 @@
 package com.cg.aieecosystemapp.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.aieecosystemapp.model.Member;
@@ -21,11 +25,10 @@ public class MemberController
     public ResponseEntity<?> createMember(String firstName, String lastName, String position, String email, String tier,
 	    String password)
     {
-
 	try
 	{
-	    Member m = service.createMember(firstName, lastName, position, email, tier, password);
-	    return new ResponseEntity<>(m, HttpStatus.CREATED);
+	    Member newMember = service.createMember(firstName, lastName, position, email, tier, password);
+	    return new ResponseEntity<>(newMember, HttpStatus.CREATED);
 	}
 	catch (Exception e)
 	{
@@ -35,62 +38,57 @@ public class MemberController
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/authenticate")
-    public ResponseEntity<?> authMember(String email, String password)
-    {
-
-	try
-	{
-	    Member m = service.authenticateMember(email, password);
-	    return new ResponseEntity<>(m, HttpStatus.OK);
-	}
-	catch (Exception e)
-	{
-	    return new ResponseEntity<>("Could not Authenticate Member : " + e.getMessage(), HttpStatus.FORBIDDEN);
-	}
-    }
-
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> getMember(String email)
+    public ResponseEntity<?> getAllMember(@RequestParam List<String> filter)
     {
-	try
+	List<Member> listOfExistingMembers = null;
+
+	if (filter.isEmpty())
 	{
-	    Member m = service.getExistingMember(email);
-	    return new ResponseEntity<>(m, HttpStatus.FOUND);
+	    listOfExistingMembers = service.getAllMembers();
 	}
-	catch (Exception e)
+	else
 	{
-	    return new ResponseEntity<>("Could not Get Member : " + e.getMessage(), HttpStatus.NOT_FOUND);
+	    listOfExistingMembers = service.getFilteredMembers(filter);
 	}
 
+	if (listOfExistingMembers.isEmpty())
+	{
+	    return new ResponseEntity<>("Could not Find Member(s) based on Search Criteria!!", HttpStatus.NOT_FOUND);
+	}
+	else
+	{
+	    return new ResponseEntity<>(listOfExistingMembers, HttpStatus.FOUND);
+	}
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> updateMember(String email, String tier)
+    public ResponseEntity<?> updateMember(String id, String tier)
     {
-
 	try
 	{
-	    Member m = service.updateMemberTier(email, tier);
-	    return new ResponseEntity<>(m, HttpStatus.OK);
+	    Member existingMember = service.updateMemberTier(id, tier);
+	    return new ResponseEntity<>(existingMember, HttpStatus.OK);
 	}
 	catch (Exception e)
 	{
-	    return new ResponseEntity<>("Could not Update Member : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    return new ResponseEntity<>("Could not Update Member : " + e.getMessage(),
+		    HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteExistingMember(String email)
+    public ResponseEntity<?> deleteExistingMember(String id)
     {
 	try
 	{
-	    service.deleteExistingMember(email);
+	    service.deleteExistingMember(id);
 	    return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	catch (Exception e)
 	{
-	    return new ResponseEntity<>("Could not Delete Member : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    return new ResponseEntity<>("Could not Delete Member : " + e.getMessage(),
+		    HttpStatus.INTERNAL_SERVER_ERROR);
 	}
     }
 
