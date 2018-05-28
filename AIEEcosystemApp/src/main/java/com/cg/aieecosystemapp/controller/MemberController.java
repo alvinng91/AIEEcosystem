@@ -1,6 +1,5 @@
 package com.cg.aieecosystemapp.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +20,6 @@ public class MemberController
 {
     @Autowired
     private MemberService service;
-
-    /*
-     * @RequestMapping(method = RequestMethod.POST) public ResponseEntity<?>
-     * createMember(String firstName, String lastName, String position, String
-     * email, String tier, String password) { try { Member newMember =
-     * service.createMember(firstName, lastName, position, email, tier,
-     * password); return new ResponseEntity<>(newMember, HttpStatus.CREATED); }
-     * catch (Exception e) { return new
-     * ResponseEntity<>("Could not create new Member : " + e.getMessage(),
-     * HttpStatus.INTERNAL_SERVER_ERROR); }
-     * 
-     * }
-     */
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createMember(@RequestBody Member aMember)
