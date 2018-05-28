@@ -2,12 +2,14 @@ package com.cg.aieecosystemapp.utility.HTML;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.cg.aieecosystemapp.aieexception.AieAuthenticationException;
 import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.utility.HTML.AieHtmlStatusCode;
 
+@ControllerAdvice
 public class AieHtmlExceptionHandler {
 
 	
