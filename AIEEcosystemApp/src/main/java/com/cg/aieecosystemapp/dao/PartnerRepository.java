@@ -12,6 +12,8 @@ public interface PartnerRepository extends JpaRepository<Partner, Integer> {
 
 	List<Partner> findByIndustryTagsNameIn(List<String> names);
 
-	Partner findByPartnerId(int partnerId); 
+	Partner findByPartnerId(int partnerId);
+
+	List<Partner> findByTechnologyTagsNameInAndIndustryTagsNameIn(List<String> technologyTags, List<String> industryTags); 
 	
 }

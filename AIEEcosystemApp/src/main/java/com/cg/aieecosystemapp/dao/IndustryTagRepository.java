@@ -10,5 +10,7 @@ import com.cg.aieecosystemapp.model.IndustryTag;
 public interface IndustryTagRepository extends JpaRepository<IndustryTag, Integer> {
 
 	List<IndustryTag> findByNameIn(List<String> names);
+	
+	IndustryTag findByName (String name);
 
 }
