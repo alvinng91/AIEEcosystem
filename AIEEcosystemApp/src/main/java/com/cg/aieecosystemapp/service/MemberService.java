@@ -8,11 +8,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
 import com.cg.aieecosystemapp.dao.MemberRepository;
 import com.cg.aieecosystemapp.model.Member;
-import com.cg.aieecosystemapp.utility.AieUtility;
+import com.cg.aieecosystemapp.utility.AieMemberUtility;
 
 @Service
 public class MemberService
@@ -20,33 +21,22 @@ public class MemberService
     @Autowired
     private MemberRepository repository;
 
-    public Member createMember(String firstName, String lastName, String position, String email, String tier,
-	    String password)
+    public Member createMember(Member newMember)
     {
-	if (!AieUtility.isMemberEmailCorrect(email))
-	{
-	    throw new AieExceptionClass("Invalid email : '" + email + "'!! Try again with valid email");
-	}
+	AieMemberUtility.validateMemberObject
 
-	Boolean memberExists = repository.existsByEmail(email);
+	(newMember);
+
+	Boolean memberExists = repository.existsByEmail(newMember.getEmail());
 
 	if (!memberExists)
 	{
-	    Member newMember = new Member(firstName, lastName, position, email, tier, password, false);
-
-	    if (AieUtility.validateMemberBeforeCreation(newMember))
-	    {
-		newMember = repository.save(newMember);
-		return newMember;
-	    }
-	    else
-	    {
-		throw new AieExceptionClass("Member has invalid data!! Verify Data and try again!!");
-	    }
+	    newMember = repository.save(newMember);
+	    return newMember;
 	}
 	else
 	{
-	    throw new AieExceptionClass("Member with email '" + email + "' already exist!!");
+	    throw new AieExceptionClass("Member with email '" + newMember.getEmail() + "' already exist!!");
 	}
 
     }
@@ -97,47 +87,51 @@ public class MemberService
 	return new ArrayList<>(filteredMembers);
     }
 
-    public Member updateMemberTier(String id, String tier)
+    public Member updateMemberTier(Member updateMember)
     {
-	try
+	List<Integer> updateMemberId = new ArrayList<>();
+	updateMemberId.add(updateMember.getMemberId());
+
+	List<Member> members = repository.findByMemberIdIn(updateMemberId);
+	Member existingMember = null;
+
+	if (!members.isEmpty())
 	{
-	    Member existingMember = repository.findByMemberId(Integer.parseInt(id));
-
-	    if (existingMember != null)
+	    if (members.size() > 1)
 	    {
-		if (!AieUtility.isMemberTierCorrect(tier))
-		{
-		    throw new AieExceptionClass("Invalid tier '" + tier + "')!! Try Again!!");
-		}
-
-		existingMember.setTier(tier);
-		existingMember = repository.save(existingMember);
-		return existingMember;
+		throw new AieExceptionClass("Error : Member Update returns multiple records!");
 	    }
 	    else
 	    {
-		throw new AieExceptionClass("Member to update does not exist !!");
+		existingMember = members.get(0);
 	    }
 	}
-	catch (NumberFormatException e)
+
+	if (existingMember != null)
 	{
-	    throw new AieExceptionClass("Id is invalid to update the member!!");
+	    AieMemberUtility.validateMemberObject(updateMember);
+	    updateMember = repository.save(updateMember);
+	    return updateMember;
+	}
+	else
+	{
+	    throw new AieExceptionClass("Error: Member to update does not exist !!");
 	}
     }
 
-    public void deleteExistingMember(String id)
+    public void deleteExistingMember(List<Integer> listOfId)
     {
 	try
 	{
-	    Member existingMember = repository.findByMemberId(Integer.parseInt(id));
+	    List<Member> existingMember = repository.findByMemberIdIn(listOfId);
 
-	    if (existingMember == null)
+	    if (existingMember.isEmpty())
 	    {
-		throw new AieExceptionClass("Member to delete does not exists!!");
+		throw new AieExceptionClass("Error: Member(s) to delete does not exists!!");
 	    }
 	    else
 	    {
-		repository.delete(existingMember);
+		repository.deleteAll(existingMember);
 	    }
 	}
 	catch (NumberFormatException e)

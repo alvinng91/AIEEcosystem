@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,13 +22,25 @@ public class MemberController
     @Autowired
     private MemberService service;
 
+    /*
+     * @RequestMapping(method = RequestMethod.POST) public ResponseEntity<?>
+     * createMember(String firstName, String lastName, String position, String
+     * email, String tier, String password) { try { Member newMember =
+     * service.createMember(firstName, lastName, position, email, tier,
+     * password); return new ResponseEntity<>(newMember, HttpStatus.CREATED); }
+     * catch (Exception e) { return new
+     * ResponseEntity<>("Could not create new Member : " + e.getMessage(),
+     * HttpStatus.INTERNAL_SERVER_ERROR); }
+     * 
+     * }
+     */
+
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createMember(String firstName, String lastName, String position, String email, String tier,
-	    String password)
+    public ResponseEntity<?> createMember(@RequestBody Member aMember)
     {
 	try
 	{
-	    Member newMember = service.createMember(firstName, lastName, position, email, tier, password);
+	    Member newMember = service.createMember(aMember);
 	    return new ResponseEntity<>(newMember, HttpStatus.CREATED);
 	}
 	catch (Exception e)
@@ -56,11 +69,11 @@ public class MemberController
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> updateMember(String id, String tier)
+    public ResponseEntity<?> updateMember(@RequestBody Member updateMember)
     {
 	try
 	{
-	    Member existingMember = service.updateMemberTier(id, tier);
+	    Member existingMember = service.updateMemberTier(updateMember);
 	    return new ResponseEntity<>(existingMember, HttpStatus.OK);
 	}
 	catch (Exception e)
@@ -71,11 +84,11 @@ public class MemberController
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteExistingMember(String id)
+    public ResponseEntity<?> deleteExistingMember(@RequestParam List<Integer> listOfIds)
     {
 	try
 	{
-	    service.deleteExistingMember(id);
+	    service.deleteExistingMember(listOfIds);
 	    return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	catch (Exception e)

@@ -10,15 +10,15 @@ public interface MemberRepository extends JpaRepository<Member, Integer>
 {
     public List<Member> findAll();
 
+    public List<Member> findByMemberIdIn(List<Integer> memberId);
+
     public List<Member> findByFirstNameIgnoreCaseContaining(String firstName);
 
     public List<Member> findByLastNameIgnoreCaseContaining(String lastName);
 
     public List<Member> findByEmailIgnoreCaseContaining(String email);
-    
-    public List<Member> findByPositionIgnoreCaseContaining(String position);
 
-    public Member findByMemberId(int id);
+    public List<Member> findByPositionIgnoreCaseContaining(String position);
 
     public Boolean existsById(int id);
 
