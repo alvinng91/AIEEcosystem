@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,34 +51,47 @@ public class MemberService
 
     }
 
-    public List<Member> getAllMembers()
-    {
-	List<Member> getAllMembers = repository.findAll();
-
-	if (getAllMembers == null)
-	{
-	    return new ArrayList<>();
-	}
-
-	return getAllMembers;
-    }
-
-    public List<Member> getFilteredMembers(List<String> filter)
+    public List<Member> getFilteredMembers(String searchQuery, String position)
     {
 	Set<Member> filteredMembers = new HashSet<>();
 
-	for (String aMember : filter)
+	boolean isSearchQueryEmptyOrNull = searchQuery == null | searchQuery.isEmpty();
+	boolean isSearchPositionEmptyOrNull = position == null | position.isEmpty();
+
+	if (isSearchQueryEmptyOrNull && isSearchPositionEmptyOrNull)
 	{
-	    List<Member> eachFilteredMemberResultList = repository
-		    .findByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContainingOrEmailIgnoreCaseContaining(
-			    aMember, aMember, aMember);
+	    return repository.findAll();
+	}
 
-	    boolean successfullyAddedToSet = filteredMembers.addAll(eachFilteredMemberResultList);
+	List<Member> searchMembersByPostionList = new ArrayList<>();
+	List<Member> searchMembersBySearchQueryList = new ArrayList<>();
 
-	    if (successfullyAddedToSet == false)
-	    {
-		throw new AieExceptionClass("Internal Error when retrieving filtered members!!");
-	    }
+	if (!isSearchQueryEmptyOrNull)
+	{
+	    List<Member> searchResultByFirstNameList = repository.findByFirstNameIgnoreCaseContaining(searchQuery);
+	    List<Member> searchResultByLastNameList = repository.findByLastNameIgnoreCaseContaining(searchQuery);
+	    List<Member> searchResultByEmailList = repository.findByEmailIgnoreCaseContaining(searchQuery);
+
+	    searchMembersBySearchQueryList.addAll(searchResultByFirstNameList);
+	    searchMembersBySearchQueryList.addAll(searchResultByLastNameList);
+	    searchMembersBySearchQueryList.addAll(searchResultByEmailList);
+
+	    filteredMembers.addAll(searchMembersBySearchQueryList);
+	}
+
+	if (isSearchQueryEmptyOrNull && !isSearchPositionEmptyOrNull)
+	{
+	    searchMembersByPostionList = repository.findByPositionIgnoreCaseContaining(position);
+	    filteredMembers.addAll(searchMembersByPostionList);
+	}
+	else if (!isSearchQueryEmptyOrNull && !isSearchPositionEmptyOrNull)
+	{
+	    List<Member> filteredMembersFromLambda = filteredMembers.stream()
+		    .filter(member -> member.getPosition().toLowerCase().contains(position.toLowerCase()))
+		    .collect(Collectors.toList());
+
+	    filteredMembers.clear();
+	    filteredMembers.addAll(filteredMembersFromLambda);
 	}
 
 	return new ArrayList<>(filteredMembers);
@@ -88,7 +102,7 @@ public class MemberService
 	try
 	{
 	    Member existingMember = repository.findByMemberId(Integer.parseInt(id));
-    
+
 	    if (existingMember != null)
 	    {
 		if (!AieUtility.isMemberTierCorrect(tier))

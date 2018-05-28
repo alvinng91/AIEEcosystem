@@ -39,18 +39,11 @@ public class MemberController
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> getAllMember(@RequestParam List<String> filter)
+    public ResponseEntity<?> getAllMember(String searchQuery, String position)
     {
 	List<Member> listOfExistingMembers = null;
 
-	if (filter.isEmpty())
-	{
-	    listOfExistingMembers = service.getAllMembers();
-	}
-	else
-	{
-	    listOfExistingMembers = service.getFilteredMembers(filter);
-	}
+	listOfExistingMembers = service.getFilteredMembers(searchQuery, position);
 
 	if (listOfExistingMembers.isEmpty())
 	{

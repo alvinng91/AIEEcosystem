@@ -10,8 +10,13 @@ public interface MemberRepository extends JpaRepository<Member, Integer>
 {
     public List<Member> findAll();
 
-    public List<Member> findByFirstNameIgnoreCaseContainingOrLastNameIgnoreCaseContainingOrEmailIgnoreCaseContaining(
-	    String firstName, String lastName, String email);
+    public List<Member> findByFirstNameIgnoreCaseContaining(String firstName);
+
+    public List<Member> findByLastNameIgnoreCaseContaining(String lastName);
+
+    public List<Member> findByEmailIgnoreCaseContaining(String email);
+    
+    public List<Member> findByPositionIgnoreCaseContaining(String position);
 
     public Member findByMemberId(int id);
 
