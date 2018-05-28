@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cg.aieecosystemapp.model.Partner;
 
-public interface PartnerRepository extends JpaRepository<Partner, Integer>
-{
-    List<Partner> findPartnersByTechnologyTags(String[] tagNames);
+public interface PartnerRepository extends JpaRepository<Partner, Integer> {
+
+	List<Partner> findByTechnologyTagsNameIn(List<String> names);
+
+	List<Partner> findByIndustryTagsNameIn(List<String> names); 
+	
 }

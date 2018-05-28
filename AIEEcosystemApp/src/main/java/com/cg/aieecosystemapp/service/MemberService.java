@@ -22,9 +22,7 @@ public class MemberService
 
     public Member createMember(Member newMember)
     {
-	AieMemberUtility.validateMemberObject
-
-	(newMember);
+	AieMemberUtility.validateMemberObject(newMember);
 
 	Boolean memberExists = repository.existsByEmail(newMember.getEmail());
 
@@ -120,22 +118,15 @@ public class MemberService
 
     public void deleteExistingMember(List<Integer> listOfId)
     {
-	try
-	{
-	    List<Member> existingMember = repository.findByMemberIdIn(listOfId);
+	List<Member> existingMember = repository.findByMemberIdIn(listOfId);
 
-	    if (existingMember.isEmpty())
-	    {
-		throw new AieExceptionClass("Error: Member(s) to delete does not exists!!");
-	    }
-	    else
-	    {
-		repository.deleteAll(existingMember);
-	    }
-	}
-	catch (NumberFormatException e)
+	if (existingMember.isEmpty())
 	{
-	    throw new AieExceptionClass("Id is invalid to update the member!!");
+	    throw new AieExceptionClass("Error: Member(s) to delete does not exists!!");
+	}
+	else
+	{
+	    repository.deleteAll(existingMember);
 	}
     }
 }

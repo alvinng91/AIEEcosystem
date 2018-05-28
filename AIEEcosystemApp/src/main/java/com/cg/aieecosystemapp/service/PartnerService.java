@@ -1,42 +1,71 @@
 package com.cg.aieecosystemapp.service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
+import com.cg.aieecosystemapp.dao.IndustryTagRepository;
 import com.cg.aieecosystemapp.dao.PartnerRepository;
+import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
+import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
+import com.cg.aieecosystemapp.model.TechnologyTag;
+import com.cg.aieecosystemapp.utility.AieMemberUtility;
 
 @Service
-public class PartnerService {
+public class PartnerService
+{
 
-	@Autowired
-	private PartnerRepository repository;
-	
-	public Partner createPartner(String name, LocalDate foundingDate, String foundBy, String url,
-			List<String> technologyTagList, List<String> industryList) {
+    @Autowired
+    private PartnerRepository partnerRepository;
 
-		Partner partner = new Partner();
-		partner.setName(name);
-		partner.setFoundingDate(Date.from(foundingDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		partner.setFoundBy(foundBy);
-		partner.setUrl(url);
-		
-		partner.setTechnologyTags(technologyTagList.get(0));
-		partner.setIndustries(industryList.get(0));
-		
-		return partner;
-	}
+    @Autowired
+    private TechnologyTagRepository technologyTagRepository;
 
-	public List<Partner> searchPartnersByTag(String [] tagNames) {
+    @Autowired
+    private IndustryTagRepository indutryTagRepository;
 
-		return repository.findPartnersByTechnologyTags(tagNames);
-	}
+    public Partner createPartner(String name, String foundingDate, String foundBy, String url, String location,
+	    String description, List<String> technologyTagNames, List<String> industryTagNames) throws ParseException
+    {
+
+	Partner partner = new Partner();
+	partner.setName(name);
+
+	Date parsedFoundingDate = AieMemberUtility.stringToDateFormatter(foundingDate);
+
+	partner.setFoundingDate(parsedFoundingDate);
+	partner.setFoundBy(foundBy);
+	partner.setUrl(url);
+	partner.setLocation(location);
+	partner.setDescription(description);
+
+	List<TechnologyTag> technologyTagObjects = technologyTagRepository.findByNameIn(technologyTagNames);
+	List<IndustryTag> industryTagObjects = indutryTagRepository.findByNameIn(industryTagNames);
+
+	partner.setTechnologyTags(technologyTagObjects);
+	partner.setIndustries(industryTagObjects);
+
+	partner = partnerRepository.save(partner);
+
+	return partner;
+    }
+
+    public List<Partner> searchPartnersByTechnologyTag(List<String> tagNames)
+    {
+
+	return partnerRepository.findByTechnologyTagsNameIn(tagNames);
+    }
+
+    public List<Partner> searchPartnersByIndustryTag(List<String> industryTags)
+    {
+
+	return partnerRepository.findByIndustryTagsNameIn(industryTags);
+    }
 
 }
