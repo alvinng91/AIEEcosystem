@@ -24,9 +24,7 @@ public class AuthenticateController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> createMember(@RequestBody Member member) {
-		
-		member.setLastName(null);
+	public ResponseEntity<?> authenticateMember(@RequestBody Member member) {
 		
 		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.authenthicateMember(member)),
