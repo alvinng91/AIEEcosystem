@@ -70,11 +70,11 @@ public class MemberController
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteExistingMember(@RequestParam List<Integer> listOfIds)
+    public ResponseEntity<?> deleteExistingMember(@RequestBody List<Member> deleteMemberList)
     {
 	try
 	{
-	    service.deleteExistingMember(listOfIds);
+	    service.deleteExistingMember(deleteMemberList);
 	    return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	catch (Exception e)

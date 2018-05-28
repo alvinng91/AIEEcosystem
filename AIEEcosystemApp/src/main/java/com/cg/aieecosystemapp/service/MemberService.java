@@ -116,17 +116,45 @@ public class MemberService
 	}
     }
 
-    public void deleteExistingMember(List<Integer> listOfId)
+    public boolean deleteExistingMember(List<Member> deleteMemberList)
     {
-	List<Member> existingMember = repository.findByMemberIdIn(listOfId);
-
-	if (existingMember.isEmpty())
+	for (Member member : deleteMemberList)
 	{
-	    throw new AieExceptionClass("Error: Member(s) to delete does not exists!!");
+	    if (!repository.existsById(member.getMemberId()))
+	    {
+		throw new AieExceptionClass("Error : Member '" + member.getLastName() + ", " + member.getFirstName()
+			+ "' does not exist!!");
+	    }
+	}
+
+	repository.deleteAll(deleteMemberList);
+
+	List<Member> membersNotDeleted = new ArrayList<>();
+
+	for (Member member : deleteMemberList)
+	{
+	    if (repository.existsById(member.getMemberId()))
+	    {
+		membersNotDeleted.add(member);
+	    }
+	}
+
+	if (membersNotDeleted.isEmpty())
+	{
+	    return true;
 	}
 	else
 	{
-	    repository.deleteAll(existingMember);
+	    String errorMessage = "Error : Some user(s) did not get deleted : " + System.lineSeparator();
+
+	    for (Member member : membersNotDeleted)
+	    {
+		errorMessage += member.getLastName() + ", " + member.getFirstName() + " (" + member.getMemberId() + ")"
+			+ System.lineSeparator();
+	    }
+
+	    throw new AieExceptionClass(errorMessage);
 	}
+
     }
 }
