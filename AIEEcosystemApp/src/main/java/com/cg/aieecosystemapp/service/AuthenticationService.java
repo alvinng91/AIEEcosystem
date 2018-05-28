@@ -7,7 +7,7 @@ import com.cg.aieecosystemapp.aieexception.AieAuthenticationException;
 import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.dao.MemberRepository;
 import com.cg.aieecosystemapp.model.Member;
-import com.cg.aieecosystemapp.utility.AieUtility;
+import com.cg.aieecosystemapp.utility.AieMemberUtility;
 import com.mysql.jdbc.StringUtils;
 
 @Service
@@ -39,7 +39,7 @@ public class AuthenticationService {
 		if(StringUtils.isNullOrEmpty(member.getTier()))
 			throw new AieInvalidFieldsException("tier is null or empty");
 		
-		if (!AieUtility.isMemberEmailCorrect(member.getEmail()))		
+		if (!AieMemberUtility.isMemberEmailCorrect(member.getEmail()))		
 			throw new AieAuthenticationException("email is invalid");
 		
 		return true;
