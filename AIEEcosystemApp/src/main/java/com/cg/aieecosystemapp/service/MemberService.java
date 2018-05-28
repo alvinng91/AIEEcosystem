@@ -1,12 +1,18 @@
 package com.cg.aieecosystemapp.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
 import com.cg.aieecosystemapp.dao.MemberRepository;
 import com.cg.aieecosystemapp.model.Member;
-import com.cg.aieecosystemapp.utility.AieUtility;
+import com.cg.aieecosystemapp.utility.AieMemberUtility;
 
 @Service
 public class MemberService
@@ -14,112 +20,141 @@ public class MemberService
     @Autowired
     private MemberRepository repository;
 
-    public Member createMember(String firstName, String lastName, String position, String email, String tier,
-	    String password)
+    public Member createMember(Member newMember)
     {
-	if (!AieUtility.isMemberEmailCorrect(email))
-	{
-	    throw new AieExceptionClass("Invalid email : '" + email + "'!! Try again with valid email");
-	}
+	AieMemberUtility.validateMemberObject(newMember);
 
-	Boolean memberExists = repository.existsByEmail(email);
+	Boolean memberExists = repository.existsByEmail(newMember.getEmail());
 
 	if (!memberExists)
 	{
-	    Member newMember = new Member(firstName, lastName, position, email, tier, password, false);
+	    newMember = repository.save(newMember);
+	    return newMember;
+	}
+	else
+	{
+	    throw new AieExceptionClass("Member with email '" + newMember.getEmail() + "' already exist!!");
+	}
 
-	    if (AieUtility.validateMemberBeforeCreation(newMember))
+    }
+
+    public List<Member> getFilteredMembers(String searchQuery, String position)
+    {
+	Set<Member> filteredMembers = new HashSet<>();
+
+	boolean isSearchQueryEmptyOrNull = searchQuery == null | searchQuery.isEmpty();
+	boolean isSearchPositionEmptyOrNull = position == null | position.isEmpty();
+
+	if (isSearchQueryEmptyOrNull && isSearchPositionEmptyOrNull)
+	{
+	    return repository.findAll();
+	}
+
+	List<Member> searchMembersByPostionList = new ArrayList<>();
+	List<Member> searchMembersBySearchQueryList = new ArrayList<>();
+
+	if (!isSearchQueryEmptyOrNull)
+	{
+	    List<Member> searchResultByFirstNameList = repository.findByFirstNameIgnoreCaseContaining(searchQuery);
+	    List<Member> searchResultByLastNameList = repository.findByLastNameIgnoreCaseContaining(searchQuery);
+	    List<Member> searchResultByEmailList = repository.findByEmailIgnoreCaseContaining(searchQuery);
+
+	    searchMembersBySearchQueryList.addAll(searchResultByFirstNameList);
+	    searchMembersBySearchQueryList.addAll(searchResultByLastNameList);
+	    searchMembersBySearchQueryList.addAll(searchResultByEmailList);
+
+	    filteredMembers.addAll(searchMembersBySearchQueryList);
+	}
+
+	if (isSearchQueryEmptyOrNull && !isSearchPositionEmptyOrNull)
+	{
+	    searchMembersByPostionList = repository.findByPositionIgnoreCaseContaining(position);
+	    filteredMembers.addAll(searchMembersByPostionList);
+	}
+	else if (!isSearchQueryEmptyOrNull && !isSearchPositionEmptyOrNull)
+	{
+	    List<Member> filteredMembersFromLambda = filteredMembers.stream()
+		    .filter(member -> member.getPosition().toLowerCase().contains(position.toLowerCase()))
+		    .collect(Collectors.toList());
+
+	    filteredMembers.clear();
+	    filteredMembers.addAll(filteredMembersFromLambda);
+	}
+
+	return new ArrayList<>(filteredMembers);
+    }
+
+    public Member updateMemberTier(Member updateMember)
+    {
+	List<Integer> updateMemberId = new ArrayList<>();
+	updateMemberId.add(updateMember.getMemberId());
+
+	List<Member> members = repository.findByMemberIdIn(updateMemberId);
+	Member existingMember = null;
+
+	if (!members.isEmpty())
+	{
+	    if (members.size() > 1)
 	    {
-		newMember = repository.save(newMember);
-		return newMember;
+		throw new AieExceptionClass("Error : Member Update returns multiple records!");
 	    }
 	    else
 	    {
-		throw new AieExceptionClass("Member has invalid data!! Verify Data and try again!!");
+		existingMember = members.get(0);
 	    }
 	}
-	else
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' already exist!!");
-	}
-
-    }
-
-    public Member authenticateMember(String email, String password)
-    {
-	if (!(AieUtility.isMemberEmailCorrect(email) && AieUtility.isMemberPasswordCorrect(password)))
-	{
-	    throw new AieExceptionClass("Invalid Email or Password!! Try Again!!");
-	}
-
-	Member correctMember = repository.findByEmailAndPassword(email, password);
-
-	if (correctMember != null)
-	{
-	    return correctMember;
-	}
-	else
-	{
-	    throw new AieExceptionClass("Email/Password is incorrect!!");
-	}
-    }
-
-    public Member getExistingMember(String email)
-    {
-	if (!AieUtility.isMemberEmailCorrect(email))
-	{
-	    throw new AieExceptionClass("Invalid email : '" + email + "'!! Try again with valid email");
-	}
-
-	Member existingMember = repository.findByEmail(email);
 
 	if (existingMember != null)
 	{
-	    return existingMember;
+	    AieMemberUtility.validateMemberObject(updateMember);
+	    updateMember = repository.save(updateMember);
+	    return updateMember;
 	}
 	else
 	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist!!");
+	    throw new AieExceptionClass("Error: Member to update does not exist !!");
 	}
     }
 
-    public Member updateMemberTier(String email, String tier)
+    public boolean deleteExistingMember(List<Member> deleteMemberList)
     {
-	if (!(AieUtility.isMemberEmailCorrect(email) && AieUtility.isMemberTierCorrect(tier)))
+	for (Member member : deleteMemberList)
 	{
-	    throw new AieExceptionClass("Invalid email ('" + email + "') or tier '" + tier + "')!! Try Again!!");
+	    if (!repository.existsById(member.getMemberId()))
+	    {
+		throw new AieExceptionClass("Error : Member '" + member.getLastName() + ", " + member.getFirstName()
+			+ "' does not exist!!");
+	    }
 	}
 
-	Member existingMember = repository.findByEmail(email);
+	repository.deleteAll(deleteMemberList);
 
-	if (existingMember != null)
+	List<Member> membersNotDeleted = new ArrayList<>();
+
+	for (Member member : deleteMemberList)
 	{
-	    existingMember.setTier(tier);
-	    existingMember = repository.save(existingMember);
-	    return existingMember;
+	    if (repository.existsById(member.getMemberId()))
+	    {
+		membersNotDeleted.add(member);
+	    }
+	}
+
+	if (membersNotDeleted.isEmpty())
+	{
+	    return true;
 	}
 	else
 	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to update!!");
-	}
-    }
+	    String errorMessage = "Error : Some user(s) did not get deleted : " + System.lineSeparator();
 
-    public void deleteExistingMember(String email)
-    {
-	if (!AieUtility.isMemberEmailCorrect(email))
-	{
-	    throw new AieExceptionClass("Invalid email : '" + email + "'!! Try again with valid email");
+	    for (Member member : membersNotDeleted)
+	    {
+		errorMessage += member.getLastName() + ", " + member.getFirstName() + " (" + member.getMemberId() + ")"
+			+ System.lineSeparator();
+	    }
+
+	    throw new AieExceptionClass(errorMessage);
 	}
 
-	Member existingMember = repository.findByEmail(email);
-
-	if (existingMember == null)
-	{
-	    throw new AieExceptionClass("Member with email '" + email + "' does not exist to delete!!");
-	}
-	else
-	{
-	    repository.delete(existingMember);
-	}
     }
 }

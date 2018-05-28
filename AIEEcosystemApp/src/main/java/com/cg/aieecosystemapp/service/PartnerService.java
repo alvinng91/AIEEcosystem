@@ -15,53 +15,57 @@ import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.model.TechnologyTag;
-import com.cg.aieecosystemapp.utility.AieUtility;
+import com.cg.aieecosystemapp.utility.AieMemberUtility;
 
 @Service
-public class PartnerService {
+public class PartnerService
+{
 
-	@Autowired
-	private PartnerRepository partnerRepository;
+    @Autowired
+    private PartnerRepository partnerRepository;
 
-	@Autowired
-	private TechnologyTagRepository technologyTagRepository;
+    @Autowired
+    private TechnologyTagRepository technologyTagRepository;
 
-	@Autowired
-	private IndustryTagRepository indutryTagRepository;
+    @Autowired
+    private IndustryTagRepository indutryTagRepository;
 
-	public Partner createPartner(String name, String foundingDate, String foundBy, String url,String location, String description,
-			List<String> technologyTagNames, List<String> industryTagNames) throws ParseException {
+    public Partner createPartner(String name, String foundingDate, String foundBy, String url, String location,
+	    String description, List<String> technologyTagNames, List<String> industryTagNames) throws ParseException
+    {
 
-		Partner partner = new Partner();
-		partner.setName(name);
+	Partner partner = new Partner();
+	partner.setName(name);
 
-		Date parsedFoundingDate = AieUtility.stringToDateFormatter(foundingDate);
+	Date parsedFoundingDate = AieMemberUtility.stringToDateFormatter(foundingDate);
 
-		partner.setFoundingDate(parsedFoundingDate);
-		partner.setFoundBy(foundBy);
-		partner.setUrl(url);
-		partner.setLocation(location);
-		partner.setDescription(description);
+	partner.setFoundingDate(parsedFoundingDate);
+	partner.setFoundBy(foundBy);
+	partner.setUrl(url);
+	partner.setLocation(location);
+	partner.setDescription(description);
 
-		List<TechnologyTag> technologyTagObjects = technologyTagRepository.findByNameIn(technologyTagNames);
-		List<IndustryTag> industryTagObjects = indutryTagRepository.findByNameIn(industryTagNames);
+	List<TechnologyTag> technologyTagObjects = technologyTagRepository.findByNameIn(technologyTagNames);
+	List<IndustryTag> industryTagObjects = indutryTagRepository.findByNameIn(industryTagNames);
 
-		partner.setTechnologyTags(technologyTagObjects);
-		partner.setIndustries(industryTagObjects);
+	partner.setTechnologyTags(technologyTagObjects);
+	partner.setIndustries(industryTagObjects);
 
-		partner = partnerRepository.save(partner);
+	partner = partnerRepository.save(partner);
 
-		return partner;
-	}
+	return partner;
+    }
 
-	public List<Partner> searchPartnersByTechnologyTag(List<String> tagNames) {
+    public List<Partner> searchPartnersByTechnologyTag(List<String> tagNames)
+    {
 
-		return partnerRepository.findByTechnologyTagsNameIn(tagNames);
-	}
+	return partnerRepository.findByTechnologyTagsNameIn(tagNames);
+    }
 
-	public List<Partner> searchPartnersByIndustryTag(List<String> industryTags) {
+    public List<Partner> searchPartnersByIndustryTag(List<String> industryTags)
+    {
 
-		return partnerRepository.findByIndustryTagsNameIn(industryTags);
-	}
+	return partnerRepository.findByIndustryTagsNameIn(industryTags);
+    }
 
 }

@@ -116,4 +116,9 @@ public class Member
 	this.accountLocked = accountLocked;
     }
 
+    @Override
+    public String toString()
+    {
+	return "[" + this.firstName + ", " + this.lastName + " - " + this.email + "]";
+    }
 }
