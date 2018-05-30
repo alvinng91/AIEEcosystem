@@ -9,6 +9,7 @@ import com.cg.aieecosystemapp.aieexception.AieAuthenticationException;
 import com.cg.aieecosystemapp.aieexception.AieEntryActionException;
 import com.cg.aieecosystemapp.aieexception.AieEntryNotFoundException;
 import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
+import com.cg.aieecosystemapp.aieexception.AieJpaCrudException;
 
 @ControllerAdvice
 public class AieHtmlExceptionHandler
@@ -47,4 +48,14 @@ public class AieHtmlExceptionHandler
 		new AieHtmlReponseBody<>(ex.getMessage(), AieHtmlStatusCode.ACTION_ERROR.toCode(), null),
 		HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    
+    @ExceptionHandler(AieJpaCrudException.class)
+    public ResponseEntity<AieHtmlReponseBody> jpaCrudError(AieJpaCrudException ex)
+    {
+
+	return new ResponseEntity<>(
+		new AieHtmlReponseBody<>(ex.getMessage(), AieHtmlStatusCode.JPA_ERROR.toCode(), null),
+		HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 }
