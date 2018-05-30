@@ -1,7 +1,5 @@
 package com.cg.aieecosystemapp.utility.html;
 
-import java.util.Map;
-
 public enum AieHtmlStatusCode {
 
 	
@@ -18,7 +16,8 @@ public enum AieHtmlStatusCode {
 	// status code for failure
 	ENTRY_NOT_FOUND(401),
 	INVALID_FIELD(402),
-	AUTHENTICATION_FAIL(403);
+	AUTHENTICATION_FAIL(403),
+    	ACTION_ERROR(405);
 
 	private int statusCode;
 
