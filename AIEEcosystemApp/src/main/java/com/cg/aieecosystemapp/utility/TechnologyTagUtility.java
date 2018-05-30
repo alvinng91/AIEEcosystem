@@ -1,6 +1,7 @@
 package com.cg.aieecosystemapp.utility;
 
 import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
+import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.model.TechnologyTag;
 
 public class TechnologyTagUtility
@@ -18,7 +19,7 @@ public class TechnologyTagUtility
 	{
 		if (tag == null)
 		{
-			throw new AieExceptionClass("tag cannot be null!");
+			throw new AieInvalidFieldsException("tag cannot be null!");
 		}
 	}
 
@@ -26,7 +27,7 @@ public class TechnologyTagUtility
 	{
 		if (tag.getName() == null || tag.getName().isEmpty())
 		{
-			throw new AieExceptionClass("tag name cannot be null/empty");
+			throw new AieInvalidFieldsException("tag name cannot be null/empty");
 		}
 	}
 
@@ -34,7 +35,7 @@ public class TechnologyTagUtility
 	{
 		if (tag.getDisplayName() == null || tag.getDisplayName().isEmpty())
 		{
-			throw new AieExceptionClass("tag display name cannot be null/empty");
+			throw new AieInvalidFieldsException("tag display name cannot be null/empty");
 		}
 	}
 
@@ -42,7 +43,7 @@ public class TechnologyTagUtility
 	{
 		if (tag.getDescription() == null || tag.getDescription().isEmpty())
 		{
-			throw new AieExceptionClass("tag description cannot be null/empty");
+			throw new AieInvalidFieldsException("tag description cannot be null/empty");
 		}
 	}
 

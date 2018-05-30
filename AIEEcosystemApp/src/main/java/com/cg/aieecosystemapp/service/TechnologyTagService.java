@@ -1,11 +1,12 @@
 package com.cg.aieecosystemapp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
+import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.TechnologyTag;
 import com.cg.aieecosystemapp.utility.TechnologyTagUtility;
@@ -23,7 +24,7 @@ public class TechnologyTagService
 
 		if (repository.existsByName(tag.getName()))
 		{
-			throw new AieExceptionClass("tag already existed");
+			throw new AieInvalidFieldsException("tag already existed");
 		}
 
 		return repository.save(tag);
@@ -36,7 +37,7 @@ public class TechnologyTagService
 
 		if (tags.isEmpty())
 		{
-			throw new AieExceptionClass("no tags exist");
+			throw new AieInvalidFieldsException("no tags exist");
 		}
 
 		return tags;
@@ -48,7 +49,7 @@ public class TechnologyTagService
 
 		if (tags.isEmpty())
 		{
-			throw new AieExceptionClass("no tags exist");
+			throw new AieInvalidFieldsException("no tags exist");
 		}
 
 		return tags;
@@ -64,23 +65,43 @@ public class TechnologyTagService
 		}
 		else
 		{
-			throw new AieExceptionClass("tag does not exist");
+			throw new AieInvalidFieldsException("tag does not exist");
 		}
 	}
 
-	public void deleteTechnologyTags(List<TechnologyTag> tags)
+	public int deleteTechnologyTags(List<TechnologyTag> tags)
 	{
 		if (tags == null)
 		{
-			throw new AieExceptionClass("tags cannot be null");
+			throw new AieInvalidFieldsException("tags cannot be null");
+		}
+
+		List<Integer> tagIds = new ArrayList<Integer>(tags.size());
+		for (TechnologyTag tag : tags)
+		{
+			int tagId = tag.getTechnologyTagId();
+			if (repository.existsById(tagId))
+			{
+				tagIds.add(tagId);
+			}
+			else
+			{
+				throw new AieInvalidFieldsException("tag with id " + tagId + " does not exist");
+			}
 		}
 
 		repository.deleteAll(tags);
-	}
 
-	public void deleteAllTechnologyTags()
-	{
-		repository.deleteAll();
+		int count = 0;
+		for (int id : tagIds)
+		{
+			if (!repository.existsById(id))
+			{
+				++count;
+			}
+		}
+
+		return count;
 	}
 
 }

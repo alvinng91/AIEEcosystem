@@ -10,6 +10,10 @@ public enum AieHtmlStatusCode {
 	
 	// status code for success
 	STATUS_OK(200),
+	CREATE_OK(201),
+	READ_OK(202),
+	UPDATE_OK(203),
+	DELETE_OK(204),
 
 	// status code for failure
 	ENTRY_NOT_FOUND(401),
