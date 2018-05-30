@@ -1,4 +1,4 @@
-package com.cg.aieecosystemapp.utility.HTML;
+package com.cg.aieecosystemapp.utility.html;
 
 import java.util.Map;
 

@@ -1,8 +1,6 @@
 package com.cg.aieecosystemapp.service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +13,7 @@ import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.model.TechnologyTag;
-import com.cg.aieecosystemapp.utility.AieMemberUtility;
+import com.cg.aieecosystemapp.utility.AieUtility;
 
 @Service
 public class PartnerService
@@ -37,7 +35,7 @@ public class PartnerService
 	Partner partner = new Partner();
 	partner.setName(name);
 
-	Date parsedFoundingDate = AieMemberUtility.stringToDateFormatter(foundingDate);
+	Date parsedFoundingDate = AieUtility.stringToDateFormatter(foundingDate);
 
 	partner.setFoundingDate(parsedFoundingDate);
 	partner.setFoundBy(foundBy);

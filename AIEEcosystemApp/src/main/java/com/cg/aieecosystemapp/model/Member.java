@@ -1,5 +1,6 @@
 package com.cg.aieecosystemapp.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,8 @@ public class Member
     private String firstName;
     private String lastName;
     private String position;
+
+    @Column(unique = true)
     private String email;
     private String tier;
     private String password;
