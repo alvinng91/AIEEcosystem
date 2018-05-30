@@ -22,6 +22,8 @@ public interface MemberRepository extends JpaRepository<Member, Integer>
 
     public Member findByEmailIgnoreCase(String email);
 
+    public Member findByMemberId(int id);
+
     public Boolean existsById(int id);
 
     public Boolean existsByEmail(String email);
