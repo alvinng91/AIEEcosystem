@@ -22,7 +22,11 @@ public class TechnologyTag
 
 	private String displayName;
 
+	@Column(columnDefinition = "TEXT")
 	private String description;
+
+	@ManyToMany(mappedBy = "technologyTags")
+	private List<Partner> partner;
 
 	public String getDescription()
 	{
@@ -33,9 +37,6 @@ public class TechnologyTag
 	{
 		this.description = description;
 	}
-
-	@ManyToMany(mappedBy = "technologyTags")
-	private List<Partner> partner;
 
 	public int getTechnologyTagId()
 	{

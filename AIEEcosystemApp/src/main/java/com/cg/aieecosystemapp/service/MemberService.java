@@ -119,7 +119,7 @@ public class MemberService
 	    if (existingMemberByEmail.getMemberId() == updateMember.getMemberId())
 	    {
 		updateMember = repository.save(updateMember);
-		return updateMember;
+		return repository.findByMemberId(updateMember.getMemberId());
 	    }
 	    else
 	    {
