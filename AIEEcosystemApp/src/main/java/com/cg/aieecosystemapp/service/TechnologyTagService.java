@@ -60,14 +60,17 @@ public class TechnologyTagService
 	{
 		TechnologyTagUtility.validateTag(tag);
 
-		if (repository.existsById(tag.getTechnologyTagId()))
-		{
-			return repository.save(tag);
-		}
-		else
+		if (!repository.existsById(tag.getTechnologyTagId()))
 		{
 			throw new AieEntryNotFoundException("tag does not exist");
 		}
+
+		if (repository.existsByName(tag.getName()))
+		{
+			throw new AieInvalidFieldsException("tag name already existed");
+		}
+
+		return repository.save(tag);
 	}
 
 	public int deleteTechnologyTags(List<TechnologyTag> tags)

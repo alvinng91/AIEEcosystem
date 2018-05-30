@@ -60,14 +60,17 @@ public class IndustryTagService
 	{
 		IndustryTagUtility.validateTag(tag);
 
-		if (repository.existsById(tag.getIndustryTagId()))
-		{
-			return repository.save(tag);
-		}
-		else
+		if (!repository.existsById(tag.getIndustryTagId()))
 		{
 			throw new AieEntryNotFoundException("tag does not exist");
 		}
+
+		if (repository.existsByName(tag.getName()))
+		{
+			throw new AieInvalidFieldsException("tag name already existed");
+		}
+
+		return repository.save(tag);
 	}
 
 	public int deleteIndustryTags(List<IndustryTag> tags)
