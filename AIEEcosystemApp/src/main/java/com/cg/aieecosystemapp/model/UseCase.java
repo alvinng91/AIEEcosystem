@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 @Entity
@@ -18,7 +20,7 @@ public class UseCase {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int useCaseId;
 	
-
+	@Temporal(TemporalType.DATE)
 	private Date dateCreated;
 
 	private String description;
