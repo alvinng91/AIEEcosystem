@@ -1,21 +1,21 @@
 package com.cg.aieecosystemapp.controller;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
-import com.cg.aieecosystemapp.model.TechnologyTag;
 import com.cg.aieecosystemapp.service.PartnerService;
+import com.cg.aieecosystemapp.utility.HTML.AieHtmlReponseBody;
+import com.cg.aieecosystemapp.utility.HTML.AieHtmlStatusCode;
 
 @RestController
 @RequestMapping(path = "/api/partner")
@@ -24,36 +24,39 @@ public class PartnerController {
 	@Autowired
 	private PartnerService service;
 
-	
-
 	@RequestMapping(method = RequestMethod.POST)
-	public Partner createPartner(@RequestBody Partner partner)
-			throws ParseException, JSONException, org.springframework.boot.configurationprocessor.json.JSONException {
-		
-		return service.createPartner(partner);
+	public ResponseEntity createPartner(@RequestBody Partner partner) {
+
+		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.createPartner(partner)), HttpStatus.OK);
+
 	}
 
-	
 	@RequestMapping(method = RequestMethod.GET)
-	public List<Partner> fetch(@RequestParam List<String> technologyTags, @RequestParam List<String> industryTags) {
+	public ResponseEntity fetch(@RequestParam List<String> technologyTags, @RequestParam List<String> industryTags) {
 
-		return service.searchPartnersByTags(technologyTags, industryTags);
+		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.searchPartnersByTags(technologyTags, industryTags)),
+				HttpStatus.OK);
 
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public Partner updatePartnerDescription(int partnerId, String name, String foundingDate, String foundBy, String url,
-			String location, String description, @RequestParam List<String> technologyTagNames,
-			@RequestParam List<String> industryTagNames) throws ParseException {
+	public ResponseEntity update(@RequestBody Partner partner) throws ParseException {
 
-		return service.updatePartner(partnerId, name, foundingDate, foundBy, url, location, description,
-				technologyTagNames, industryTagNames);
+		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.updatePartner(partner)), HttpStatus.OK);
+
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
-	public void deletePartner(int partnerId) throws ParseException {
+	public ResponseEntity deletePartner(int partnerId) throws ParseException {
+		
+		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.deletePartner(partnerId)), HttpStatus.OK);
 
-		service.deletePartner(partnerId);
+
+		
 	}
 
 }

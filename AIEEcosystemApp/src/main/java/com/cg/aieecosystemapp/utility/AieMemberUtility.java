@@ -20,14 +20,7 @@ public class AieMemberUtility
 	throw new IllegalStateException("Cannot Instantciate AieUtility Class");
     }
 
-    public static Date stringToDateFormatter(String date) throws ParseException
-    {
-	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-	Date parsedDate = formatter.parse(date);
-
-	return parsedDate;
-    }
+    
 
     public static boolean validateMemberObject(Member aMember)
     {
