@@ -25,34 +25,34 @@ public class PartnerController {
 	private PartnerService service;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity createPartner(@RequestBody Partner partner) {
+	public ResponseEntity<?> createPartner(@RequestBody Partner partner) {
 
-		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.createPartner(partner)), HttpStatus.OK);
 
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity fetch(@RequestParam List<String> technologyTags, @RequestParam List<String> industryTags) {
+	public ResponseEntity<?> fetch(@RequestParam List<String> technologyTags, @RequestParam List<String> industryTags) {
 
-		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.searchPartnersByTags(technologyTags, industryTags)),
 				HttpStatus.OK);
 
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public ResponseEntity update(@RequestBody Partner partner) throws ParseException {
+	public ResponseEntity<?> update(@RequestBody Partner partner) throws ParseException {
 
-		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.updatePartner(partner)), HttpStatus.OK);
 
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
-	public ResponseEntity deletePartner(int partnerId) throws ParseException {
+	public ResponseEntity<?> deletePartner(int partnerId) throws ParseException {
 
-		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.deletePartner(partnerId)), HttpStatus.OK);
 
 	}
