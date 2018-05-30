@@ -17,7 +17,8 @@ public enum AieHtmlStatusCode {
 	ENTRY_NOT_FOUND(401),
 	INVALID_FIELD(402),
 	AUTHENTICATION_FAIL(403),
-    	ACTION_ERROR(405);
+    	ACTION_ERROR(405),
+    JPA_ERROR(406);
 
 	private int statusCode;
 

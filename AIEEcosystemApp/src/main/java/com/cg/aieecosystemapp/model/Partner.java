@@ -56,7 +56,7 @@ public class Partner {
 	
 	
 	@OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
-	private List<UseCase> useCases;
+	private List<PartnerUseCase> partnerUseCases;
 
 	public int getPartnerId() {
 		return partnerId;
