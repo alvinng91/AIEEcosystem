@@ -25,23 +25,15 @@ public class MemberController
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createMember(@RequestBody Member aMember)
     {
-	/*
-	 * try { Member newMember = service.createMember(aMember); return new
-	 * ResponseEntity<>(newMember, HttpStatus.CREATED); } catch (Exception
-	 * e) { return new ResponseEntity<>("Could not create new Member : " +
-	 * e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); }
-	 */
-	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
-		AieHtmlStatusCode.STATUS_OK.toCode(), service.createMember(aMember)), HttpStatus.OK);
+	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.CREATE_OK.toString(),
+		AieHtmlStatusCode.CREATE_OK.toCode(), service.createMember(aMember)), HttpStatus.OK);
 
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getAllMember(String searchQuery, String position)
     {
-	List<Member> listOfExistingMembers = null;
-
-	listOfExistingMembers = service.getFilteredMembers(searchQuery, position);
+	List<Member> listOfExistingMembers = service.getFilteredMembers(searchQuery, position);
 
 	if (listOfExistingMembers.isEmpty())
 	{
@@ -50,23 +42,23 @@ public class MemberController
 	}
 	else
 	{
-	    return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
-		    AieHtmlStatusCode.STATUS_OK.toCode(), listOfExistingMembers), HttpStatus.OK);
+	    return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.READ_OK.toString(),
+		    AieHtmlStatusCode.READ_OK.toCode(), listOfExistingMembers), HttpStatus.OK);
 	}
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<?> updateMember(@RequestBody Member updateMember)
     {
-	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
-		AieHtmlStatusCode.STATUS_OK.toCode(), service.updateMemberTier(updateMember)), HttpStatus.OK);
+	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.UPDATE_OK.toString(),
+		AieHtmlStatusCode.UPDATE_OK.toCode(), service.updateMemberTier(updateMember)), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteExistingMember(@RequestBody List<Member> deleteMemberList)
     {
-	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
-		AieHtmlStatusCode.STATUS_OK.toCode(), service.deleteExistingMember(deleteMemberList)), HttpStatus.OK);
+	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.DELETE_OK.toString(),
+		AieHtmlStatusCode.DELETE_OK.toCode(), service.deleteExistingMember(deleteMemberList)), HttpStatus.OK);
     }
 
 }
