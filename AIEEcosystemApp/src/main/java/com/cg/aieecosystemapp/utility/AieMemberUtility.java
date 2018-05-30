@@ -1,11 +1,8 @@
 package com.cg.aieecosystemapp.utility;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.regex.Pattern;
 
-import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
+import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.model.Member;
 
 public class AieMemberUtility
@@ -17,41 +14,39 @@ public class AieMemberUtility
 
     private AieMemberUtility()
     {
-	throw new IllegalStateException("Cannot Instantciate AieUtility Class");
+	throw new IllegalStateException("Cannot Instantiate AieMemberUtility Class");
     }
-
-    
 
     public static boolean validateMemberObject(Member aMember)
     {
 	if (aMember.getFirstName() == null || aMember.getFirstName().isEmpty())
 	{
-	    throw new AieExceptionClass("Error : First name is invalid : " + aMember.getFirstName());
+	    throw new AieInvalidFieldsException("Error : First name is invalid : " + aMember.getFirstName());
 	}
 
 	if (aMember.getLastName() == null || aMember.getLastName().isEmpty())
 	{
-	    throw new AieExceptionClass("Error : Last name is invalid : " + aMember.getFirstName());
+	    throw new AieInvalidFieldsException("Error : Last name is invalid : " + aMember.getLastName());
 	}
 
 	if (aMember.getPosition() == null || aMember.getPosition().isEmpty())
 	{
-	    throw new AieExceptionClass("Error : Position is invalid : " + aMember.getFirstName());
+	    throw new AieInvalidFieldsException("Error : Position is invalid : " + aMember.getPosition());
 	}
 
 	if (!isMemberEmailCorrect(aMember.getEmail()))
 	{
-	    throw new AieExceptionClass("Error : Email is invalid : " + aMember.getEmail());
+	    throw new AieInvalidFieldsException("Error : Email is invalid : " + aMember.getEmail());
 	}
 
 	if (!isMemberTierCorrect(aMember.getTier()))
 	{
-	    throw new AieExceptionClass("Error : Tier is invalid : " + aMember.getTier());
+	    throw new AieInvalidFieldsException("Error : Tier is invalid : " + aMember.getTier());
 	}
 
 	if (!isMemberPasswordCorrect(aMember.getPassword()))
 	{
-	    throw new AieExceptionClass("Error : Password is invalid : " + aMember.getPassword());
+	    throw new AieInvalidFieldsException("Error : Password is invalid : " + aMember.getPassword());
 	}
 
 	return true;

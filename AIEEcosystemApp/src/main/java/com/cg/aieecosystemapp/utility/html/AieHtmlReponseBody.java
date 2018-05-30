@@ -1,4 +1,4 @@
-package com.cg.aieecosystemapp.utility.HTML;
+package com.cg.aieecosystemapp.utility.html;
 
 
 public class AieHtmlReponseBody<T>{

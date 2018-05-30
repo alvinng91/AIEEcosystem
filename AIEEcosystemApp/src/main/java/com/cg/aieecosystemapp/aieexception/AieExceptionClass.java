@@ -1,6 +1,6 @@
 package com.cg.aieecosystemapp.aieexception;
 
-import com.cg.aieecosystemapp.utility.HTML.AieHtmlStatusCode;
+import com.cg.aieecosystemapp.utility.html.AieHtmlStatusCode;
 
 public class AieExceptionClass extends RuntimeException {
 	

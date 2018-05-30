@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
+import com.cg.aieecosystemapp.aieexception.*;
 import com.cg.aieecosystemapp.dao.MemberRepository;
 import com.cg.aieecosystemapp.model.Member;
 import com.cg.aieecosystemapp.utility.AieMemberUtility;
@@ -22,6 +22,11 @@ public class MemberService
 
     public Member createMember(Member newMember)
     {
+	if (newMember == null)
+	{
+	    throw new AieInvalidFieldsException("Error: New Member to create cannot be null!!");
+	}
+
 	AieMemberUtility.validateMemberObject(newMember);
 
 	Boolean memberExists = repository.existsByEmail(newMember.getEmail());
@@ -33,7 +38,7 @@ public class MemberService
 	}
 	else
 	{
-	    throw new AieExceptionClass("Member with email '" + newMember.getEmail() + "' already exist!!");
+	    throw new AieInvalidFieldsException("Member with email '" + newMember.getEmail() + "' already exist!!");
 	}
 
     }
@@ -42,8 +47,8 @@ public class MemberService
     {
 	Set<Member> filteredMembers = new HashSet<>();
 
-	boolean isSearchQueryEmptyOrNull = searchQuery == null | searchQuery.isEmpty();
-	boolean isSearchPositionEmptyOrNull = position == null | position.isEmpty();
+	boolean isSearchQueryEmptyOrNull = searchQuery == null || searchQuery.isEmpty();
+	boolean isSearchPositionEmptyOrNull = position == null || position.isEmpty();
 
 	if (isSearchQueryEmptyOrNull && isSearchPositionEmptyOrNull)
 	{
@@ -96,7 +101,8 @@ public class MemberService
 	{
 	    if (members.size() > 1)
 	    {
-		throw new AieExceptionClass("Error : Member Update returns multiple records!");
+		throw new AieInvalidFieldsException(
+			"Error : Member Update returns multiple records for '" + updateMember.getEmail() + "'");
 	    }
 	    else
 	    {
@@ -107,23 +113,40 @@ public class MemberService
 	if (existingMember != null)
 	{
 	    AieMemberUtility.validateMemberObject(updateMember);
-	    updateMember = repository.save(updateMember);
-	    return updateMember;
+
+	    Member existingMemberByEmail = repository.findByEmailIgnoreCase(updateMember.getEmail());
+
+	    if (existingMemberByEmail.getMemberId() == updateMember.getMemberId())
+	    {
+		updateMember = repository.save(updateMember);
+		return updateMember;
+	    }
+	    else
+	    {
+		throw new AieInvalidFieldsException(
+			"Error: Member to update has email ' " + updateMember.getEmail() + " ' which already exists!!");
+	    }
 	}
 	else
 	{
-	    throw new AieExceptionClass("Error: Member to update does not exist !!");
+	    throw new AieInvalidFieldsException(
+		    "Error: Member ' " + updateMember.getEmail() + " ' to update does not exist !!");
 	}
     }
 
-    public boolean deleteExistingMember(List<Member> deleteMemberList)
+    public int deleteExistingMember(List<Member> deleteMemberList)
     {
+	if (deleteMemberList == null)
+	{
+	    throw new AieInvalidFieldsException("Error: List of Members to delete cannot be null!");
+	}
+
 	for (Member member : deleteMemberList)
 	{
 	    if (!repository.existsById(member.getMemberId()))
 	    {
-		throw new AieExceptionClass("Error : Member '" + member.getLastName() + ", " + member.getFirstName()
-			+ "' does not exist!!");
+		throw new AieEntryNotFoundException("Error : Member '" + member.getLastName() + ", "
+			+ member.getFirstName() + "' does not exist!!");
 	    }
 	}
 
@@ -141,11 +164,12 @@ public class MemberService
 
 	if (membersNotDeleted.isEmpty())
 	{
-	    return true;
+	    return deleteMemberList.size();
 	}
 	else
 	{
-	    String errorMessage = "Error : Some user(s) did not get deleted : " + System.lineSeparator();
+	    String errorMessage = "Error : " + (deleteMemberList.size() - membersNotDeleted.size())
+		    + " user(s) did not get deleted : " + System.lineSeparator();
 
 	    for (Member member : membersNotDeleted)
 	    {
@@ -153,8 +177,7 @@ public class MemberService
 			+ System.lineSeparator();
 	    }
 
-	    throw new AieExceptionClass(errorMessage);
+	    throw new AieEntryActionException(errorMessage);
 	}
-
     }
 }

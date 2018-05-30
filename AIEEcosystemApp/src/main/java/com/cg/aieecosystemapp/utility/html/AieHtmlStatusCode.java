@@ -1,6 +1,4 @@
-package com.cg.aieecosystemapp.utility.HTML;
-
-import java.util.Map;
+package com.cg.aieecosystemapp.utility.html;
 
 public enum AieHtmlStatusCode {
 
@@ -10,11 +8,16 @@ public enum AieHtmlStatusCode {
 	
 	// status code for success
 	STATUS_OK(200),
+	CREATE_OK(201),
+	READ_OK(202),
+	UPDATE_OK(203),
+	DELETE_OK(204),
 
 	// status code for failure
 	ENTRY_NOT_FOUND(401),
 	INVALID_FIELD(402),
-	AUTHENTICATION_FAIL(403);
+	AUTHENTICATION_FAIL(403),
+    	ACTION_ERROR(405);
 
 	private int statusCode;
 
