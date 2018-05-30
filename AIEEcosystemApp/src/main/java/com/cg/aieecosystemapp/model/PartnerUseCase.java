@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 
 
 @Entity
-public class UseCase {
+public class PartnerUseCase {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +23,7 @@ public class UseCase {
 	@Temporal(TemporalType.DATE)
 	private Date dateCreated;
 
+	@Column(columnDefinition = "TEXT")
 	private String description;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
