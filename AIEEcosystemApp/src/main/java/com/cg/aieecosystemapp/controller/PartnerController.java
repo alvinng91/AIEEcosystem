@@ -1,15 +1,11 @@
 package com.cg.aieecosystemapp.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.service.PartnerService;
+import com.cg.aieecosystemapp.utility.html.AieHtmlReponseBody;
+import com.cg.aieecosystemapp.utility.html.AieHtmlStatusCode;
 
 @RestController
 @RequestMapping(path = "/api/partner")
@@ -26,25 +24,36 @@ public class PartnerController {
 	private PartnerService service;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public Partner createPartner(String name, String foundingDate, String foundBy, String url, String location,
-			String description, @RequestParam List<String> technologyTagNames, @RequestParam List<String> industryNames
-			) throws ParseException {
+	public ResponseEntity<?> createPartner(@RequestBody Partner partner) {
 
-		return service.createPartner(name, foundingDate, foundBy, url,location,description, technologyTagNames, industryNames);
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.createPartner(partner)), HttpStatus.OK);
+
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/technologytag")
-	public List<Partner> retrievePartnersFromTechnologyTag(@RequestParam List<String> technologyTags
-			) {
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<?> fetch(@RequestParam List<String> technologyTags, @RequestParam List<String> industryTags) {
 
-		return service.searchPartnersByTechnologyTag(technologyTags);
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.searchPartnersByTags(technologyTags, industryTags)),
+				HttpStatus.OK);
+
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/industrytag")
-	public List<Partner> retrievePartnersFromIndustryTag(@RequestParam List<String> industryTags
-			) {
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> update(@RequestBody Partner partner) {
 
-		return service.searchPartnersByIndustryTag(industryTags);
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.updatePartner(partner)), HttpStatus.OK);
+
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE)
+	public ResponseEntity<?> deletePartner(int partnerId) {
+
+		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.deletePartner(partnerId)), HttpStatus.OK);
+
 	}
 
 }

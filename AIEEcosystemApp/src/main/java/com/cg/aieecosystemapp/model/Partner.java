@@ -124,11 +124,11 @@ public class Partner {
 		this.technologyTags = technologyTags;
 	}
 
-	public List<IndustryTag> getIndustries() {
+	public List<IndustryTag> getIndustryTags() {
 		return industryTags;
 	}
 
-	public void setIndustries(List<IndustryTag> industries) {
+	public void setIndustryTags(List<IndustryTag> industries) {
 		this.industryTags = industries;
 	}
 

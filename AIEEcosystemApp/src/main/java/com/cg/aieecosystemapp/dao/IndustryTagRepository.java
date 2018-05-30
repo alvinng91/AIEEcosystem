@@ -10,6 +10,8 @@ public interface IndustryTagRepository extends JpaRepository<IndustryTag, Intege
 {
 
 	List<IndustryTag> findByNameIn(List<String> names);
+	
+	IndustryTag findByName (String name);
 
 	Boolean existsByName(String name);
 }

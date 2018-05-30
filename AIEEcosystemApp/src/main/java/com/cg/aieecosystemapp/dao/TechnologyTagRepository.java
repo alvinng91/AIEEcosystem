@@ -10,6 +10,8 @@ public interface TechnologyTagRepository extends JpaRepository<TechnologyTag, In
 {
 
 	List<TechnologyTag> findByNameIn(List<String> names);
+	
+	TechnologyTag findByName(String name);
 
 	Boolean existsByName(String name);
 }
