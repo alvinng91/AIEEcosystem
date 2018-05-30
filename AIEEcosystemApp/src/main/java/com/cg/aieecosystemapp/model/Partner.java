@@ -12,12 +12,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+
 
 
 @Entity
@@ -51,6 +53,10 @@ public class Partner {
 	joinColumns = @JoinColumn(name = "partner_id", referencedColumnName = "partnerId"), 
 	inverseJoinColumns = @JoinColumn(name = "industry_Tag_Id", referencedColumnName = "industryTagId"))
 	private List<IndustryTag> industryTags;
+	
+	
+	@OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
+	private List<UseCase> useCases;
 
 	public int getPartnerId() {
 		return partnerId;
