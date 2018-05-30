@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.service.PartnerService;
-import com.cg.aieecosystemapp.utility.HTML.AieHtmlReponseBody;
-import com.cg.aieecosystemapp.utility.HTML.AieHtmlStatusCode;
+import com.cg.aieecosystemapp.utility.html.AieHtmlReponseBody;
+import com.cg.aieecosystemapp.utility.html.AieHtmlStatusCode;
 
 @RestController
 @RequestMapping(path = "/api/partner")
@@ -51,12 +51,10 @@ public class PartnerController {
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public ResponseEntity deletePartner(int partnerId) throws ParseException {
-		
+
 		return new ResponseEntity<>(new AieHtmlReponseBody(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.deletePartner(partnerId)), HttpStatus.OK);
 
-
-		
 	}
 
 }
