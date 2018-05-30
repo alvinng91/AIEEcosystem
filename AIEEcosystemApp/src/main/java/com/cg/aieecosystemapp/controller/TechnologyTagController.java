@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.aieecosystemapp.model.TechnologyTag;
 import com.cg.aieecosystemapp.service.TechnologyTagService;
-import com.cg.aieecosystemapp.utility.HTML.AieHtmlReponseBody;
-import com.cg.aieecosystemapp.utility.HTML.AieHtmlStatusCode;
+import com.cg.aieecosystemapp.utility.html.AieHtmlReponseBody;
+import com.cg.aieecosystemapp.utility.html.AieHtmlStatusCode;
 
 @RestController
 @RequestMapping(path = "/api/technologytag")

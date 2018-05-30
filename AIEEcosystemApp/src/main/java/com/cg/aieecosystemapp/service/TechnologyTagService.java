@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cg.aieecosystemapp.aieexception.AieEntryNotFoundException;
 import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.TechnologyTag;
@@ -65,7 +66,7 @@ public class TechnologyTagService
 		}
 		else
 		{
-			throw new AieInvalidFieldsException("tag does not exist");
+			throw new AieEntryNotFoundException("tag does not exist");
 		}
 	}
 
