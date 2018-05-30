@@ -1,6 +1,5 @@
 package com.cg.aieecosystemapp.controller;
 
-import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class PartnerController {
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public ResponseEntity<?> update(@RequestBody Partner partner) throws ParseException {
+	public ResponseEntity<?> update(@RequestBody Partner partner) {
 
 		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.updatePartner(partner)), HttpStatus.OK);
@@ -50,7 +49,7 @@ public class PartnerController {
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
-	public ResponseEntity<?> deletePartner(int partnerId) throws ParseException {
+	public ResponseEntity<?> deletePartner(int partnerId) {
 
 		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
 				AieHtmlStatusCode.STATUS_OK.toCode(), service.deletePartner(partnerId)), HttpStatus.OK);
