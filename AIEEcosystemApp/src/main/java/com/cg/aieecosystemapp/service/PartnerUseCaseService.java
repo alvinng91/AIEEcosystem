@@ -31,15 +31,12 @@ public class PartnerUseCaseService {
 
 		if (useCase.getDateCreated() == null)
 			throw new AieInvalidFieldsException("date created is null or empty");
-
-		if(repository.findById(useCase.getUseCaseId()).isPresent())
-			throw new AieInvalidFieldsException("duplicate use case already exists");
 		
 		return Optional.of(repository.save(useCase)).orElseThrow(() -> new AieJpaCrudException("create failed"));
 	}
 
-	public PartnerUseCase updatePartnerUseCase(PartnerUseCase useCase) {
-		repository.findById(useCase.getUseCaseId())
+	public PartnerUseCase updatePartnerUseCase(int useCaseId, PartnerUseCase useCase) {
+		repository.findById(useCaseId)
 				.orElseThrow(() -> new AieEntryNotFoundException("partner use case not found"));
 		return Optional.of(repository.save(useCase)).orElseThrow(() -> new AieJpaCrudException("create failed"));
 	}

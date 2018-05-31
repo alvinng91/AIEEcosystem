@@ -36,7 +36,7 @@ public class PartnerUseCaseController {
 			@RequestBody PartnerUseCase useCase) {
 		
 		return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.STATUS_OK.toString(),
-				AieHtmlStatusCode.STATUS_OK.toCode(), service.updatePartnerUseCase(useCase)),
+				AieHtmlStatusCode.STATUS_OK.toCode(), service.updatePartnerUseCase(useCaseId,useCase)),
 					HttpStatus.OK);
 
 	}
