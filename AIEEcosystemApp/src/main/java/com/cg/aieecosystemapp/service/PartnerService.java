@@ -5,11 +5,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cg.aieecosystemapp.aieexception.AieEntryNotFoundException;
 import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
 import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.dao.IndustryTagRepository;
@@ -18,6 +20,7 @@ import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
 import com.cg.aieecosystemapp.model.TechnologyTag;
+import com.cg.aieecosystemapp.utility.AiePartnerUtility;
 
 @Service
 public class PartnerService {
@@ -32,6 +35,11 @@ public class PartnerService {
 	private IndustryTagRepository industryTagRepository;
 
 	public Partner createPartner(Partner partner) {
+
+		if (partner == null) {
+
+			throw new AieInvalidFieldsException("Partner is null");
+		}
 
 		List<String> technologyTagString = partner.getTechnologyTags().stream().map(TechnologyTag::getName)
 				.collect(Collectors.toList());
@@ -112,77 +120,51 @@ public class PartnerService {
 	}
 
 	public Partner updatePartner(Partner partner) {
+		AiePartnerUtility.validate(partner);
 
-		if (partner == null) {
+		Optional<Partner> existingPartner = partnerRepository.findById(partner.getPartnerId());
 
-			throw new AieInvalidFieldsException("Partner is null");
+		if (!existingPartner.isPresent()) {
+			throw new AieEntryNotFoundException("partner does not exist");
+		}			
+		
+		boolean nameIsSameIgnoreCase = existingPartner.get().getName().equalsIgnoreCase(partner.getName());
+
+		if (!nameIsSameIgnoreCase && partnerRepository.existsByName(partner.getName()))
+		{
+			throw new AieInvalidFieldsException("Partner with this name already exists");
+		}
+					
+		List<String> technologyTagString = partner.getTechnologyTags().stream().map(TechnologyTag::getName)
+				.collect(Collectors.toList());
+		List<TechnologyTag> technologyTagNames = technologyTagRepository.findByNameIn(technologyTagString);
+
+		if (technologyTagNames.size() != partner.getTechnologyTags().size()) {
+
+			String errMsg = new String("Invalid Tags are: ");
+			technologyTagString
+					.removeAll(technologyTagNames.stream().map(TechnologyTag::getName).collect(Collectors.toList()));
+			for (String s : technologyTagString)
+				errMsg += s + ",";
+			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
 		}
 
-		int partnerId = partner.getPartnerId();
+		List<String> industryTagString = partner.getIndustryTags().stream().map(IndustryTag::getName)
+				.collect(Collectors.toList());
+		List<IndustryTag> industryTagNames = industryTagRepository.findByNameIn(industryTagString);
 
-		Partner partnerToBeUpdated = partnerRepository.findByPartnerId(partnerId);
+		if (industryTagNames.size() != partner.getIndustryTags().size()) {
 
-		if (partnerToBeUpdated != null) {
-
-			String name = partner.getName();
-			if (name != null && !partnerToBeUpdated.getName().equals(name) && partnerRepository.existsByName(name)) {
-				// if name exists and the name of the partner id to be updated is different from
-				// the name that already exists
-				new AieInvalidFieldsException("Partner with this name already exists");
-			}
-			Date foundindgDate = partner.getFoundingDate();
-			String foundBy = partner.getFoundBy();
-			String url = partner.getUrl();
-			String location = partner.getLocation();
-			String description = partner.getDescription();
-
-			partnerToBeUpdated.setName(name);
-
-			partnerToBeUpdated.setFoundingDate(foundindgDate);
-			partnerToBeUpdated.setFoundBy(foundBy);
-			partnerToBeUpdated.setUrl(url);
-			partnerToBeUpdated.setLocation(location);
-			partnerToBeUpdated.setDescription(description);
-
-			List<String> technologyTagString = partner.getTechnologyTags().stream().map(TechnologyTag::getName)
-					.collect(Collectors.toList());
-			List<TechnologyTag> technologyTagNames = technologyTagRepository.findByNameIn(technologyTagString);
-
-			if (technologyTagNames.size() != partner.getTechnologyTags().size()) {
-
-				String errMsg = new String("Invalid Tags are: ");
-				technologyTagString.removeAll(
-						technologyTagNames.stream().map(TechnologyTag::getName).collect(Collectors.toList()));
-				for (String s : technologyTagString)
-					errMsg += s + ",";
-				throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
-			}
-
-			List<String> industryTagString = partner.getIndustryTags().stream().map(IndustryTag::getName)
-					.collect(Collectors.toList());
-			List<IndustryTag> industryTagNames = industryTagRepository.findByNameIn(industryTagString);
-
-			if (industryTagNames.size() != partner.getIndustryTags().size()) {
-
-				String errMsg = new String("Invalid Tags are: ");
-				industryTagString
-						.removeAll(industryTagNames.stream().map(IndustryTag::getName).collect(Collectors.toList()));
-				for (String s : industryTagString)
-					errMsg += s + ",";
-				throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
-			}
-
-			partnerToBeUpdated.setTechnologyTags(technologyTagNames);
-			partnerToBeUpdated.setIndustryTags(industryTagNames);
-
-			partnerToBeUpdated = partnerRepository.save(partnerToBeUpdated);
-
-			return partnerToBeUpdated;
-		} else {
-
-			throw new AieExceptionClass("Partner  with partner id  '" + partnerId + "' does not exist to update!!");
+			String errMsg = new String("Invalid Tags are: ");
+			industryTagString
+					.removeAll(industryTagNames.stream().map(IndustryTag::getName).collect(Collectors.toList()));
+			for (String s : industryTagString)
+				errMsg += s + ",";
+			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
 		}
 
+		partner.setTechnologyTags(technologyTagNames);
+		partner.setIndustryTags(industryTagNames);
+		return partnerRepository.save(partner);
 	}
-
 }
