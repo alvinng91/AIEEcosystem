@@ -89,10 +89,10 @@ public class MemberService
 	return new ArrayList<>(filteredMembers);
     }
 
-    public Member updateMemberTier(Member updateMember)
+    public Member updateMember(Member member)
     {
 	List<Integer> updateMemberId = new ArrayList<>();
-	updateMemberId.add(updateMember.getMemberId());
+	updateMemberId.add(member.getMemberId());
 
 	List<Member> members = repository.findByMemberIdIn(updateMemberId);
 	Member existingMember = null;
@@ -102,7 +102,7 @@ public class MemberService
 	    if (members.size() > 1)
 	    {
 		throw new AieInvalidFieldsException(
-			"Error : Member Update returns multiple records for '" + updateMember.getEmail() + "'");
+			"Error : Member Update returns multiple records for '" + member.getEmail() + "'");
 	    }
 	    else
 	    {
@@ -112,25 +112,25 @@ public class MemberService
 
 	if (existingMember != null)
 	{
-	    AieMemberUtility.validateMemberObject(updateMember);
+	    AieMemberUtility.validateMemberObject(member);
 
-	    Member existingMemberByEmail = repository.findByEmailIgnoreCase(updateMember.getEmail());
+	    Member existingMemberByEmail = repository.findByEmailIgnoreCase(member.getEmail());
 
-	    if (existingMemberByEmail.getMemberId() == updateMember.getMemberId())
+	    if (existingMemberByEmail.getMemberId() == member.getMemberId())
 	    {
-		updateMember = repository.save(updateMember);
-		return repository.findByMemberId(updateMember.getMemberId());
+		member = repository.save(member);
+		return repository.findByMemberId(member.getMemberId());
 	    }
 	    else
 	    {
 		throw new AieInvalidFieldsException(
-			"Error: Member to update has email ' " + updateMember.getEmail() + " ' which already exists!!");
+			"Error: Member to update has email ' " + member.getEmail() + " ' which already exists!!");
 	    }
 	}
 	else
 	{
 	    throw new AieInvalidFieldsException(
-		    "Error: Member ' " + updateMember.getEmail() + " ' to update does not exist !!");
+		    "Error: Member ' " + member.getEmail() + " ' to update does not exist !!");
 	}
     }
 

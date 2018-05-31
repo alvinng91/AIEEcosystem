@@ -48,10 +48,10 @@ public class MemberController
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> updateMember(@RequestBody Member updateMember)
+    public ResponseEntity<?> updateMember(@RequestBody Member member)
     {
 	return new ResponseEntity<>(new AieHtmlReponseBody<>(AieHtmlStatusCode.UPDATE_OK.toString(),
-		AieHtmlStatusCode.UPDATE_OK.toCode(), service.updateMemberTier(updateMember)), HttpStatus.OK);
+		AieHtmlStatusCode.UPDATE_OK.toCode(), service.updateMember(member)), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
