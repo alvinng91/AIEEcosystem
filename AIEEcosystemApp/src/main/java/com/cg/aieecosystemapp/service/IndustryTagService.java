@@ -2,6 +2,7 @@ package com.cg.aieecosystemapp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,12 +61,16 @@ public class IndustryTagService
 	{
 		IndustryTagUtility.validateTag(tag);
 
+		Optional<IndustryTag> existingTag = repository.findById(tag.getIndustryTagId());
+
 		if (!repository.existsById(tag.getIndustryTagId()))
 		{
 			throw new AieEntryNotFoundException("tag does not exist");
 		}
 
-		if (repository.existsByName(tag.getName()))
+		boolean nameIsSameIgnoreCase = existingTag.get().getName().equalsIgnoreCase(tag.getName());
+
+		if (!nameIsSameIgnoreCase && repository.existsByName(tag.getName()))
 		{
 			throw new AieInvalidFieldsException("tag name already existed");
 		}
