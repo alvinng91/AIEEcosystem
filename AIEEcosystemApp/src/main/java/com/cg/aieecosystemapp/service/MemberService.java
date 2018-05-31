@@ -89,6 +89,11 @@ public class MemberService
 
     public Member updateMember(Member member)
     {
+	if(member == null)
+	{
+	    throw new AieInvalidFieldsException("Error: Input Member cannot be null!!");
+	}
+	
 	List<Integer> updateMemberId = new ArrayList<>();
 	updateMemberId.add(member.getMemberId());
 
