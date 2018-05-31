@@ -36,6 +36,17 @@ public class PartnerUseCaseService {
 	}
 
 	public PartnerUseCase updatePartnerUseCase(int useCaseId, PartnerUseCase useCase) {
+		
+		if (useCase == null) {
+			throw new AieInvalidFieldsException("Error: usecase is null");
+		}
+
+		if (StringUtils.isNullOrEmpty(useCase.getDescription()))
+			throw new AieInvalidFieldsException("description is null or empty");
+
+		if (useCase.getDateCreated() == null)
+			throw new AieInvalidFieldsException("date created is null or empty");
+		
 		repository.findById(useCaseId)
 				.orElseThrow(() -> new AieEntryNotFoundException("partner use case not found"));
 		return Optional.of(repository.save(useCase)).orElseThrow(() -> new AieJpaCrudException("create failed"));
