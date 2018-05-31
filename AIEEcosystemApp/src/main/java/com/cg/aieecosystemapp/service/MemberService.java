@@ -55,11 +55,9 @@ public class MemberService
 	    return repository.findAll();
 	}
 
-	List<Member> searchMembersByPostionList = new ArrayList<>();
-	List<Member> searchMembersBySearchQueryList = new ArrayList<>();
-
 	if (!isSearchQueryEmptyOrNull)
 	{
+	    List<Member> searchMembersBySearchQueryList = new ArrayList<>();
 	    List<Member> searchResultByFirstNameList = repository.findByFirstNameIgnoreCaseContaining(searchQuery);
 	    List<Member> searchResultByLastNameList = repository.findByLastNameIgnoreCaseContaining(searchQuery);
 	    List<Member> searchResultByEmailList = repository.findByEmailIgnoreCaseContaining(searchQuery);
@@ -69,21 +67,21 @@ public class MemberService
 	    searchMembersBySearchQueryList.addAll(searchResultByEmailList);
 
 	    filteredMembers.addAll(searchMembersBySearchQueryList);
-	}
 
-	if (isSearchQueryEmptyOrNull && !isSearchPositionEmptyOrNull)
+	    if (!isSearchPositionEmptyOrNull)
+	    {
+		List<Member> filteredMembersFromLambda = filteredMembers.stream()
+			.filter(member -> member.getPosition().toLowerCase().contains(position.toLowerCase()))
+			.collect(Collectors.toList());
+
+		filteredMembers.clear();
+		filteredMembers.addAll(filteredMembersFromLambda);
+	    }
+	}
+	else// Search by only Position
 	{
-	    searchMembersByPostionList = repository.findByPositionIgnoreCaseContaining(position);
+	    List<Member> searchMembersByPostionList = repository.findByPositionIgnoreCaseContaining(position);
 	    filteredMembers.addAll(searchMembersByPostionList);
-	}
-	else if (!isSearchQueryEmptyOrNull && !isSearchPositionEmptyOrNull)
-	{
-	    List<Member> filteredMembersFromLambda = filteredMembers.stream()
-		    .filter(member -> member.getPosition().toLowerCase().contains(position.toLowerCase()))
-		    .collect(Collectors.toList());
-
-	    filteredMembers.clear();
-	    filteredMembers.addAll(filteredMembersFromLambda);
 	}
 
 	return new ArrayList<>(filteredMembers);
@@ -168,16 +166,17 @@ public class MemberService
 	}
 	else
 	{
-	    String errorMessage = "Error : " + (deleteMemberList.size() - membersNotDeleted.size())
-		    + " user(s) did not get deleted : " + System.lineSeparator();
+	    StringBuilder errorMessage = new StringBuilder(
+		    "Error : " + (deleteMemberList.size() - membersNotDeleted.size())
+			    + " user(s) did not get deleted : " + System.lineSeparator());
 
 	    for (Member member : membersNotDeleted)
 	    {
-		errorMessage += member.getLastName() + ", " + member.getFirstName() + " (" + member.getMemberId() + ")"
-			+ System.lineSeparator();
+		errorMessage.append(member.getLastName() + ", " + member.getFirstName() + " (" + member.getMemberId()
+			+ ")" + System.lineSeparator());
 	    }
 
-	    throw new AieEntryActionException(errorMessage);
+	    throw new AieEntryActionException(errorMessage.toString());
 	}
     }
 }
