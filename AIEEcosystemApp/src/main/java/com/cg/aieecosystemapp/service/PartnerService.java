@@ -3,11 +3,13 @@ package com.cg.aieecosystemapp.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
+import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.dao.IndustryTagRepository;
 import com.cg.aieecosystemapp.dao.PartnerRepository;
 import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
@@ -29,39 +31,37 @@ public class PartnerService {
 
 	public Partner createPartner(Partner partner) {
 
-		List<TechnologyTag> technologyTagNames = partner.getTechnologyTags();
-		List<IndustryTag> industryTagNames = partner.getIndustryTags();
+		
+		List<String> technologyTagString = partner.getTechnologyTags().stream().map(TechnologyTag::getName)
+				  .collect(Collectors.toList());
+		List<TechnologyTag> technologyTagNames = technologyTagRepository.findByNameIn(technologyTagString);
+		
 
-		List<String> technologyTagNameList = new ArrayList();
-		List<String> industryTagNameList = new ArrayList();
-
-		for (int i = 0; i < technologyTagNames.size(); i++) {
-			TechnologyTag tag = technologyTagNames.get(i);
-			String tagName = tag.getName();
-			tag = technologyTagRepository.findByName(tagName);
-			if (tag == null) {
-				throw new AieExceptionClass("Technology Tag" + tagName + " does not exist");
-			} else {
-				technologyTagNameList.add(tagName);
-			}
-
+		if(technologyTagNames.size() != partner.getTechnologyTags().size()){
+			
+			String errMsg = new String("Invalid Tags are: ");
+			technologyTagString.removeAll(technologyTagNames.stream().map(TechnologyTag::getName)
+				  .collect(Collectors.toList()));
+			for(String s : technologyTagString)
+				errMsg += s + ",";
+			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length()-1));
 		}
-
-		for (int i = 0; i < industryTagNames.size(); i++) {
-			IndustryTag tag = industryTagNames.get(i);
-			String tagName = tag.getName();
-			tag = industryTagRepository.findByName(tagName);
-			if (tag == null) {
-				throw new AieExceptionClass("Industry Tag" + tagName + " does not exist");
-			} else {
-				industryTagNameList.add(tagName);
-
-			}
+		
+		List<String> industryTagString = partner.getIndustryTags().stream().map(IndustryTag::getName)
+				  .collect(Collectors.toList());
+		List<IndustryTag> industryTagNames = industryTagRepository.findByNameIn(industryTagString);
+		
+		
+		if(industryTagNames.size() != partner.getIndustryTags().size()){
+			
+			String errMsg = new String("Invalid Tags are: ");
+			industryTagString.removeAll(industryTagNames.stream().map(IndustryTag::getName)
+				  .collect(Collectors.toList()));
+			for(String s : industryTagString)
+				errMsg += s + ",";
+			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length()-1));
 		}
-
-		technologyTagNames = technologyTagRepository.findByNameIn(technologyTagNameList);
-		industryTagNames = industryTagRepository.findByNameIn(industryTagNameList);
-
+		
 		partner.setTechnologyTags(technologyTagNames);
 		partner.setIndustryTags(industryTagNames);
 
