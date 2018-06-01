@@ -1,7 +1,6 @@
 package com.cg.aieecosystemapp.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +15,11 @@ import com.cg.aieecosystemapp.aieexception.AieExceptionClass;
 import com.cg.aieecosystemapp.aieexception.AieInvalidFieldsException;
 import com.cg.aieecosystemapp.dao.IndustryTagRepository;
 import com.cg.aieecosystemapp.dao.PartnerRepository;
+import com.cg.aieecosystemapp.dao.PartnerUseCaseRepository;
 import com.cg.aieecosystemapp.dao.TechnologyTagRepository;
 import com.cg.aieecosystemapp.model.IndustryTag;
 import com.cg.aieecosystemapp.model.Partner;
+import com.cg.aieecosystemapp.model.PartnerUseCase;
 import com.cg.aieecosystemapp.model.TechnologyTag;
 import com.cg.aieecosystemapp.utility.AiePartnerUtility;
 
@@ -34,42 +35,30 @@ public class PartnerService {
 	@Autowired
 	private IndustryTagRepository industryTagRepository;
 
+	@Autowired
+	private PartnerUseCaseRepository partnerUseCaseRepository;
+
 	public Partner createPartner(Partner partner) {
+        boolean update = false;
+		AiePartnerUtility.validate(partner);
 
-		if (partner == null) {
-
-			throw new AieInvalidFieldsException("Partner is null");
+		if (partnerRepository.existsByName(partner.getName())) {
+			throw new AieInvalidFieldsException("partner with than name already exists");
 		}
 
-		List<String> technologyTagString = partner.getTechnologyTags().stream().map(TechnologyTag::getName)
-				.collect(Collectors.toList());
-		List<TechnologyTag> technologyTagNames = technologyTagRepository.findByNameIn(technologyTagString);
+		List<TechnologyTag> technologyTagNames = AiePartnerUtility.fetchTechnologyTags(partner,
+				technologyTagRepository);
+		List<IndustryTag> industryTagNames = AiePartnerUtility.fetchIndustryTags(partner, industryTagRepository);
 
-		if (technologyTagNames.size() != partner.getTechnologyTags().size()) {
-
-			String errMsg = new String("Invalid Tags are: ");
-			technologyTagString
-					.removeAll(technologyTagNames.stream().map(TechnologyTag::getName).collect(Collectors.toList()));
-			for (String s : technologyTagString)
-				errMsg += s + ",";
-			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
+		if (partner.getPartnerUseCases() != null) {
+			List<PartnerUseCase> partnerUseCases = AiePartnerUtility.fetchPartnerUseCases(partner,
+					partnerUseCaseRepository,update);
+			partner.setPartnerUseCases(partnerUseCases);
 		}
 
-		List<String> industryTagString = partner.getIndustryTags().stream().map(IndustryTag::getName)
-				.collect(Collectors.toList());
-		List<IndustryTag> industryTagNames = industryTagRepository.findByNameIn(industryTagString);
-
-		if (industryTagNames.size() != partner.getIndustryTags().size()) {
-
-			String errMsg = new String("Invalid Tags are: ");
-			industryTagString
-					.removeAll(industryTagNames.stream().map(IndustryTag::getName).collect(Collectors.toList()));
-			for (String s : industryTagString)
-				errMsg += s + ",";
-			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
-		}
 		partner.setTechnologyTags(technologyTagNames);
 		partner.setIndustryTags(industryTagNames);
+
 		partner = partnerRepository.save(partner);
 
 		return partner;
@@ -120,51 +109,35 @@ public class PartnerService {
 	}
 
 	public Partner updatePartner(Partner partner) {
+		boolean update = true;
+		
 		AiePartnerUtility.validate(partner);
 
 		Optional<Partner> existingPartner = partnerRepository.findById(partner.getPartnerId());
 
 		if (!existingPartner.isPresent()) {
 			throw new AieEntryNotFoundException("partner does not exist");
-		}			
-		
+		}
+
 		boolean nameIsSameIgnoreCase = existingPartner.get().getName().equalsIgnoreCase(partner.getName());
 
-		if (!nameIsSameIgnoreCase && partnerRepository.existsByName(partner.getName()))
-		{
+		if (!nameIsSameIgnoreCase && partnerRepository.existsByName(partner.getName())) {
 			throw new AieInvalidFieldsException("Partner with this name already exists");
 		}
-					
-		List<String> technologyTagString = partner.getTechnologyTags().stream().map(TechnologyTag::getName)
-				.collect(Collectors.toList());
-		List<TechnologyTag> technologyTagNames = technologyTagRepository.findByNameIn(technologyTagString);
 
-		if (technologyTagNames.size() != partner.getTechnologyTags().size()) {
+		List<TechnologyTag> technologyTagNames = AiePartnerUtility.fetchTechnologyTags(partner,
+				technologyTagRepository);
+		List<IndustryTag> industryTagNames = AiePartnerUtility.fetchIndustryTags(partner, industryTagRepository);
 
-			String errMsg = new String("Invalid Tags are: ");
-			technologyTagString
-					.removeAll(technologyTagNames.stream().map(TechnologyTag::getName).collect(Collectors.toList()));
-			for (String s : technologyTagString)
-				errMsg += s + ",";
-			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
+		if (partner.getPartnerUseCases() != null) {
+			List<PartnerUseCase> partnerUseCases = AiePartnerUtility.fetchPartnerUseCases(partner,
+					partnerUseCaseRepository,update);
+			existingPartner.get().setPartnerUseCases(partnerUseCases);
 		}
 
-		List<String> industryTagString = partner.getIndustryTags().stream().map(IndustryTag::getName)
-				.collect(Collectors.toList());
-		List<IndustryTag> industryTagNames = industryTagRepository.findByNameIn(industryTagString);
+		existingPartner.get().setTechnologyTags(technologyTagNames);
+		existingPartner.get().setIndustryTags(industryTagNames);
 
-		if (industryTagNames.size() != partner.getIndustryTags().size()) {
-
-			String errMsg = new String("Invalid Tags are: ");
-			industryTagString
-					.removeAll(industryTagNames.stream().map(IndustryTag::getName).collect(Collectors.toList()));
-			for (String s : industryTagString)
-				errMsg += s + ",";
-			throw new AieInvalidFieldsException(errMsg.substring(0, errMsg.length() - 1));
-		}
-
-		partner.setTechnologyTags(technologyTagNames);
-		partner.setIndustryTags(industryTagNames);
-		return partnerRepository.save(partner);
+		return partnerRepository.save(existingPartner.get());
 	}
 }
