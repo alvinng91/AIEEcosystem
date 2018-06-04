@@ -16,4 +16,6 @@ public interface PartnerRepository extends JpaRepository<Partner, Integer> {
 
 	List<Partner> findByTechnologyTagsNameInAndIndustryTagsNameIn(List<String> technologyTags, List<String> industryTags); 
 	
+	boolean existsByName(String name);
+	
 }

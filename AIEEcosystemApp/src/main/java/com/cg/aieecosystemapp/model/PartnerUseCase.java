@@ -2,33 +2,40 @@ package com.cg.aieecosystemapp.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class PartnerUseCase {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int useCaseId;
-	
+
 	@Temporal(TemporalType.DATE)
 	private Date dateCreated;
 
 	@Column(columnDefinition = "TEXT")
 	private String description;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@JsonBackReference
 	private Partner partner;
 
+	
 	public int getUseCaseId() {
 		return useCaseId;
 	}
@@ -53,5 +60,13 @@ public class PartnerUseCase {
 		this.description = description;
 	}
 
+	public Partner getPartner() {
+		return partner;
+	}
 	
+	public void setPartner(Partner partner) {
+		this.partner = partner;
+	}
+
+
 }

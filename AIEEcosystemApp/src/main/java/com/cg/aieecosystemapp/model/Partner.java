@@ -20,7 +20,9 @@ import javax.persistence.JoinColumn;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Partner {
@@ -40,23 +42,36 @@ public class Partner {
 	private String location;
 	private String description;
 
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-	@JoinTable(name = "partner_technologyTag", 
-	joinColumns = @JoinColumn(name = "partner_id", referencedColumnName = "partnerId"), 
-	inverseJoinColumns = @JoinColumn(name = "technology_Tag_Id", referencedColumnName = "technologyTagId"))
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@JoinTable(name = "partner_technologyTag", joinColumns = @JoinColumn(name = "partner_id", referencedColumnName = "partnerId"), inverseJoinColumns = @JoinColumn(name = "technology_Tag_Id", referencedColumnName = "technologyTagId"))
 	private List<TechnologyTag> technologyTags;
-	
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-	@JoinTable(name = "partner_industryTag", 
-	joinColumns = @JoinColumn(name = "partner_id", referencedColumnName = "partnerId"), 
-	inverseJoinColumns = @JoinColumn(name = "industry_Tag_Id", referencedColumnName = "industryTagId"))
+
+	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@JoinTable(name = "partner_industryTag", joinColumns = @JoinColumn(name = "partner_id", referencedColumnName = "partnerId"), inverseJoinColumns = @JoinColumn(name = "industry_Tag_Id", referencedColumnName = "industryTagId"))
 	private List<IndustryTag> industryTags;
-	
-	
-	@OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
+
+	@OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.MERGE)
+	@JsonManagedReference
 	private List<PartnerUseCase> partnerUseCases;
+
+	public List<PartnerUseCase> getPartnerUseCases() {
+		return partnerUseCases;
+	}
+
+	public void setPartnerUseCases(List<PartnerUseCase> partnerUseCases) {
+		
+		//this.partnerUseCases = partnerUseCases;
+		if(partnerUseCases != null && partnerUseCases.size()!= 0)
+		{
+			for(PartnerUseCase p : partnerUseCases)
+			{
+				p.setPartner(this);
+			}
+			
+		}
+		this.partnerUseCases = partnerUseCases;
+		
+	}
 
 	public int getPartnerId() {
 		return partnerId;
@@ -97,8 +112,6 @@ public class Partner {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	
 
 	public String getLocation() {
 		return location;
