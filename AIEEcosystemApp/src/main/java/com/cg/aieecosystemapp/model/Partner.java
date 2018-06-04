@@ -61,7 +61,6 @@ public class Partner {
 	public void setPartnerUseCases(List<PartnerUseCase> partnerUseCases) {
 		
 		//this.partnerUseCases = partnerUseCases;
-		System.out.println("fuiwheiu" + partnerUseCases.size());
 		if(partnerUseCases != null && partnerUseCases.size()!= 0)
 		{
 			for(PartnerUseCase p : partnerUseCases)
