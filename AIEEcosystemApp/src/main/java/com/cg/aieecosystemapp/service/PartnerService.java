@@ -50,15 +50,18 @@ public class PartnerService {
 				technologyTagRepository);
 		List<IndustryTag> industryTagNames = AiePartnerUtility.fetchIndustryTags(partner, industryTagRepository);
 
+		List<PartnerUseCase> partnerUseCases = new ArrayList<>();
 		if (partner.getPartnerUseCases() != null) {
-			List<PartnerUseCase> partnerUseCases = AiePartnerUtility.fetchPartnerUseCases(partner,
-					partnerUseCaseRepository,update);
-			partner.setPartnerUseCases(partnerUseCases);
+			partnerUseCases = AiePartnerUtility.fetchPartnerUseCases(partner,
+					partnerUseCaseRepository);
+			
 		}
 
+				
+		
 		partner.setTechnologyTags(technologyTagNames);
 		partner.setIndustryTags(industryTagNames);
-
+		partner.setPartnerUseCases(partnerUseCases);
 		partner = partnerRepository.save(partner);
 
 		return partner;
@@ -129,14 +132,16 @@ public class PartnerService {
 				technologyTagRepository);
 		List<IndustryTag> industryTagNames = AiePartnerUtility.fetchIndustryTags(partner, industryTagRepository);
 
+		List<PartnerUseCase> partnerUseCases = new ArrayList<>();
 		if (partner.getPartnerUseCases() != null) {
-			List<PartnerUseCase> partnerUseCases = AiePartnerUtility.fetchPartnerUseCases(partner,
-					partnerUseCaseRepository,update);
-			existingPartner.get().setPartnerUseCases(partnerUseCases);
+			partnerUseCases = AiePartnerUtility.fetchPartnerUseCases(partner,
+					partnerUseCaseRepository);
+			
 		}
 
 		existingPartner.get().setTechnologyTags(technologyTagNames);
 		existingPartner.get().setIndustryTags(industryTagNames);
+		existingPartner.get().setPartnerUseCases(partnerUseCases);
 
 		return partnerRepository.save(existingPartner.get());
 	}

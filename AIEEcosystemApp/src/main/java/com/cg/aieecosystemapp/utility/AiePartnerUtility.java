@@ -116,30 +116,21 @@ public class AiePartnerUtility {
 	}
 
 	public static List<PartnerUseCase> fetchPartnerUseCases(Partner partner,
-			PartnerUseCaseRepository partnerUseCaseRepository, boolean update) {
+			PartnerUseCaseRepository partnerUseCaseRepository) {
 
 		List<Integer> partnerUseCaseIds = partner.getPartnerUseCases().stream().map(PartnerUseCase::getUseCaseId)
 				.collect(Collectors.toList());
 		List<PartnerUseCase> partnerUseCases = partnerUseCaseRepository.findByUseCaseIdIn(partnerUseCaseIds);
+		
+		
+		
+		
 		List<Integer> invalidUseCaseIds = new ArrayList<>();
 
-		if (update) {
 
-			for (PartnerUseCase partnerUseCase : partnerUseCases) {
-				if (partnerUseCase.getPartner() == null) {
-					partnerUseCase.setPartner(partner);
-					
-				} else if (partnerUseCase.getPartner().getPartnerId() != partner.getPartnerId()) {
-					invalidUseCaseIds.add(partnerUseCase.getUseCaseId());
-				}
-			}
-		} else {
-			for (PartnerUseCase partnerUseCase : partnerUseCases) {
-				if (partnerUseCase.getPartner() == null) {
-					partnerUseCase.setPartner(partner);
-				} else {
-					invalidUseCaseIds.add(partnerUseCase.getUseCaseId());
-				}
+		for (PartnerUseCase partnerUseCase : partnerUseCases) {
+			 if (partnerUseCase.getPartner() != null || partnerUseCase.getPartner().getPartnerId() != partner.getPartnerId()) {
+				invalidUseCaseIds.add(partnerUseCase.getUseCaseId());
 			}
 		}
 

@@ -20,6 +20,10 @@ import javax.persistence.JoinColumn;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Partner {
 
@@ -46,7 +50,8 @@ public class Partner {
 	@JoinTable(name = "partner_industryTag", joinColumns = @JoinColumn(name = "partner_id", referencedColumnName = "partnerId"), inverseJoinColumns = @JoinColumn(name = "industry_Tag_Id", referencedColumnName = "industryTagId"))
 	private List<IndustryTag> industryTags;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER ,cascade = CascadeType.MERGE)
+	@JsonManagedReference
 	private List<PartnerUseCase> partnerUseCases;
 
 	public List<PartnerUseCase> getPartnerUseCases() {
@@ -54,7 +59,19 @@ public class Partner {
 	}
 
 	public void setPartnerUseCases(List<PartnerUseCase> partnerUseCases) {
+		
+		//this.partnerUseCases = partnerUseCases;
+		System.out.println("fuiwheiu" + partnerUseCases.size());
+		if(partnerUseCases != null && partnerUseCases.size()!= 0)
+		{
+			for(PartnerUseCase p : partnerUseCases)
+			{
+				p.setPartner(this);
+			}
+			
+		}
 		this.partnerUseCases = partnerUseCases;
+		
 	}
 
 	public int getPartnerId() {
