@@ -121,15 +121,12 @@ public class AiePartnerUtility {
 		List<Integer> partnerUseCaseIds = partner.getPartnerUseCases().stream().map(PartnerUseCase::getUseCaseId)
 				.collect(Collectors.toList());
 		List<PartnerUseCase> partnerUseCases = partnerUseCaseRepository.findByUseCaseIdIn(partnerUseCaseIds);
-		
-		
-		
-		
+
 		List<Integer> invalidUseCaseIds = new ArrayList<>();
 
-
 		for (PartnerUseCase partnerUseCase : partnerUseCases) {
-			 if (partnerUseCase.getPartner() != null || partnerUseCase.getPartner().getPartnerId() != partner.getPartnerId()) {
+			if (partnerUseCase.getPartner() != null
+					&& partnerUseCase.getPartner().getPartnerId() != partner.getPartnerId()) {
 				invalidUseCaseIds.add(partnerUseCase.getUseCaseId());
 			}
 		}
